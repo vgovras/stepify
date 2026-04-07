@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../core/core.dart';
 
 /// Background timer indicator bar at the top of the cook screen.
@@ -51,7 +49,8 @@ class FloatBar extends StatelessWidget {
           ),
           Text(
             formatTimer(secondsRemaining),
-            style: GoogleFonts.playfairDisplay(
+            style: TextStyle(
+              fontFamily: 'Playfair Display',
               fontSize: AppSizes.fontFloatBarTimer,
               fontWeight: FontWeight.w700,
               color: timeColor,

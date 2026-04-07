@@ -17,6 +17,7 @@ class StepsTab extends StatelessWidget {
         final sorted = state.sortedSteps;
 
         return ListView.builder(
+          cacheExtent: 300,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSizes.screenHorizontal,
             vertical: 12,

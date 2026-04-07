@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../core/core.dart';
 
 final appTheme = ThemeData(
   brightness: Brightness.dark,
   scaffoldBackgroundColor: AppColors.bg,
+  fontFamily: 'DM Sans',
   colorScheme: const ColorScheme.dark(
     surface: AppColors.bg,
     primary: AppColors.ac,
     secondary: AppColors.ac2,
     error: AppColors.rd,
   ),
-  textTheme: GoogleFonts.dmSansTextTheme(
-    ThemeData.dark().textTheme,
-  ).apply(bodyColor: AppColors.tx, displayColor: AppColors.tx),
+  textTheme: ThemeData.dark().textTheme.apply(
+    fontFamily: 'DM Sans',
+    bodyColor: AppColors.tx,
+    displayColor: AppColors.tx,
+  ),
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.bg,
     foregroundColor: AppColors.tx,

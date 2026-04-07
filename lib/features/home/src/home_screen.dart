@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         child: RecipeCard(
                           recipe: recipe,
-                          onTap: () => context.go('/recipe/${recipe.id}'),
+                          onTap: () => context.push('/recipe/${recipe.id}'),
                         ),
                       );
                     },

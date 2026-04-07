@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../core/core.dart';
 import '../../../shared_ui/shared_ui.dart';
 import 'detail_cubit.dart';
@@ -65,7 +63,7 @@ class DetailScreen extends StatelessWidget {
                     PrimaryButton(
                       label: '🛒 Перевірити інгредієнти',
                       onPressed: () =>
-                          context.go('/recipe/${recipe.id}/checklist'),
+                          context.push('/recipe/${recipe.id}/checklist'),
                     ),
                     const SizedBox(height: 24),
                     const _RatingSection(),
@@ -93,7 +91,8 @@ class _RecipeHeader extends StatelessWidget {
       children: [
         Text(
           recipe.name,
-          style: GoogleFonts.playfairDisplay(
+          style: const TextStyle(
+            fontFamily: 'Playfair Display',
             fontSize: 24,
             fontWeight: FontWeight.w700,
             color: AppColors.tx,
@@ -141,9 +140,10 @@ class _IngredientsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Інгредієнти',
-          style: GoogleFonts.playfairDisplay(
+          style: TextStyle(
+            fontFamily: 'Playfair Display',
             fontSize: AppSizes.fontSectionTitle,
             fontWeight: FontWeight.w700,
             color: AppColors.tx,
@@ -199,7 +199,7 @@ class _HeroArea extends StatelessWidget {
           child: Text(emoji, style: const TextStyle(fontSize: 88)),
         ),
         Positioned(
-          top: MediaQuery.of(context).padding.top + 8,
+          top: MediaQuery.paddingOf(context).top + 8,
           left: 12,
           child: GestureDetector(
             onTap: onBack,

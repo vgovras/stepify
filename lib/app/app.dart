@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'router.dart';
+import 'shader_warmup.dart';
 import 'theme.dart';
 
 class StepifyApp extends StatelessWidget {
@@ -8,11 +9,13 @@ class StepifyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Stepify',
-      debugShowCheckedModeBanner: false,
-      theme: appTheme,
-      routerConfig: appRouter,
+    return ShaderWarmup(
+      child: MaterialApp.router(
+        title: 'Stepify',
+        debugShowCheckedModeBanner: false,
+        theme: appTheme,
+        routerConfig: appRouter,
+      ),
     );
   }
 }

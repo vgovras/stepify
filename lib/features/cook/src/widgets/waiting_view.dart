@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../../core/core.dart';
 import '../../../../shared_ui/shared_ui.dart';
 import '../cook_state.dart';
@@ -33,9 +31,10 @@ class WaitingView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
+          const Text(
             'Наступний крок буде доступний після таймера',
-            style: GoogleFonts.playfairDisplay(
+            style: TextStyle(
+              fontFamily: 'Playfair Display',
               fontSize: AppSizes.fontStepTitle,
               fontWeight: FontWeight.w700,
               height: 1.3,
@@ -118,7 +117,8 @@ class _WaitingTimerCard extends StatelessWidget {
           ),
           Text(
             formatTimer(timerState.secondsRemaining),
-            style: GoogleFonts.playfairDisplay(
+            style: const TextStyle(
+              fontFamily: 'Playfair Display',
               fontSize: 38,
               fontWeight: FontWeight.w700,
               color: AppColors.ac,

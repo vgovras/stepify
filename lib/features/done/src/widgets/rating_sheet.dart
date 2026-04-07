@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../../core/core.dart';
 import '../../../../shared_ui/shared_ui.dart';
 import '../done_cubit.dart';
@@ -31,7 +29,7 @@ class _RatingSheetState extends State<RatingSheet> {
         AppSizes.screenHorizontal,
         20,
         AppSizes.screenHorizontal,
-        MediaQuery.of(context).viewInsets.bottom + 20,
+        MediaQuery.viewInsetsOf(context).bottom + 20,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -46,9 +44,10 @@ class _RatingSheetState extends State<RatingSheet> {
             ),
           ),
           const SizedBox(height: 20),
-          Text(
+          const Text(
             'Оцініть рецепт',
-            style: GoogleFonts.playfairDisplay(
+            style: TextStyle(
+              fontFamily: 'Playfair Display',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               color: AppColors.tx,

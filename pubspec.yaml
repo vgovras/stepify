@@ -26,10 +26,6 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   timezone: ^0.10.0
 
-  # UI
-  # confetti_widget added when implementing done screen
-  google_fonts: ^6.2.1
-
   # Icons
   cupertino_icons: ^1.0.8
 
@@ -43,3 +39,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: Playfair Display
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay-Bold.ttf
+          weight: 700
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DMSans-Regular.ttf

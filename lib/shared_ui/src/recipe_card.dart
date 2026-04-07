@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../core/core.dart';
 
 /// Recipe card for the home catalog.
@@ -131,7 +129,8 @@ class RecipeCard extends StatelessWidget {
                 children: [
                   Text(
                     recipe.name,
-                    style: GoogleFonts.playfairDisplay(
+                    style: const TextStyle(
+                      fontFamily: 'Playfair Display',
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                       height: 1.3,

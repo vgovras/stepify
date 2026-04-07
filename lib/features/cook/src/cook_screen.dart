@@ -82,32 +82,36 @@ class _CookScreenState extends State<CookScreen> with WidgetsBindingObserver {
 
               return Column(
                 children: [
-                  // Float bars
-                  FloatBarSection(state: state),
+                  // Float bars — isolated repaint boundary to avoid
+                  // repainting the entire cook screen on every timer tick.
+                  RepaintBoundary(child: FloatBarSection(state: state)),
                   // Top bar
                   CookTopBar(
                     completedCount: state.completedCount,
                     totalSteps: state.totalSteps,
                     onExit: _handleExit,
                   ),
-                  // Step card or waiting view
+                  // Step card or waiting view — isolated repaint boundary
+                  // so timer updates in float bars don't repaint step content.
                   Expanded(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: state.isWaiting
-                          ? WaitingView(
-                              key: const ValueKey('waiting'),
-                              state: state,
-                            )
-                          : step != null
-                          ? StepCard(
-                              key: ValueKey(step.id),
-                              step: step,
-                              stepNumber: state.completedCount + 1,
-                              totalSteps: state.totalSteps,
-                              timerState: state.activeTimers[step.id],
-                            )
-                          : const SizedBox.shrink(),
+                    child: RepaintBoundary(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: state.isWaiting
+                            ? WaitingView(
+                                key: const ValueKey('waiting'),
+                                state: state,
+                              )
+                            : step != null
+                            ? StepCard(
+                                key: ValueKey(step.id),
+                                step: step,
+                                stepNumber: state.completedCount + 1,
+                                totalSteps: state.totalSteps,
+                                timerState: state.activeTimers[step.id],
+                              )
+                            : const SizedBox.shrink(),
+                      ),
                     ),
                   ),
                   // Bottom action button

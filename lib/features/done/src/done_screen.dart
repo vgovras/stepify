@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../core/core.dart';
 import '../../../shared_ui/shared_ui.dart';
 import 'done_cubit.dart';
@@ -98,9 +96,10 @@ class _DoneScreenState extends State<DoneScreen> with TickerProviderStateMixin {
                         child: const Text('🎉', style: TextStyle(fontSize: 68)),
                       ),
                       const SizedBox(height: 20),
-                      Text(
+                      const Text(
                         'Смачного!',
-                        style: GoogleFonts.playfairDisplay(
+                        style: TextStyle(
+                          fontFamily: 'Playfair Display',
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
                           color: AppColors.tx,

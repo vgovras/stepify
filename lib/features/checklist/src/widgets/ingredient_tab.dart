@@ -51,6 +51,7 @@ class IngredientTab extends StatelessWidget {
             ),
             Expanded(
               child: ListView.builder(
+                cacheExtent: 300,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSizes.screenHorizontal,
                 ),

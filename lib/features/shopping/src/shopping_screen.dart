@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../core/core.dart';
 import '../../../data/data.dart';
 import '../../../shared_ui/shared_ui.dart';
@@ -64,9 +62,10 @@ class _Header extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
+              const Text(
                 'Список покупок',
-                style: GoogleFonts.playfairDisplay(
+                style: TextStyle(
+                  fontFamily: 'Playfair Display',
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: AppColors.tx,
@@ -135,6 +134,7 @@ class _ItemList extends StatelessWidget {
         .toList();
 
     return ListView.builder(
+      cacheExtent: 300,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSizes.screenHorizontal,
         vertical: 12,

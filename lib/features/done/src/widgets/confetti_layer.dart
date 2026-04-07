@@ -32,7 +32,7 @@ class _ConfettiLayerState extends State<ConfettiLayer> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_particles.isEmpty) {
-      final screenWidth = MediaQuery.of(context).size.width;
+      final screenWidth = MediaQuery.sizeOf(context).width;
       final random = Random(42);
       _particles = List.generate(
         AppDurations.confettiParticles,
@@ -49,7 +49,7 @@ class _ConfettiLayerState extends State<ConfettiLayer> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.sizeOf(context);
 
     return AnimatedBuilder(
       animation: widget.controller,

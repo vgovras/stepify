@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../../core/core.dart';
 import '../../../../shared_ui/shared_ui.dart';
 
@@ -38,7 +36,8 @@ class StepCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             step.text,
-            style: GoogleFonts.playfairDisplay(
+            style: const TextStyle(
+              fontFamily: 'Playfair Display',
               fontSize: AppSizes.fontStepTitle,
               fontWeight: FontWeight.w700,
               height: 1.3,

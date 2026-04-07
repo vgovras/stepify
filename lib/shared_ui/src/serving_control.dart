@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/core.dart';
 
@@ -46,7 +45,8 @@ class ServingControl extends StatelessWidget {
                 child: Text(
                   '$servings',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.playfairDisplay(
+                  style: const TextStyle(
+                    fontFamily: 'Playfair Display',
                     fontSize: AppSizes.fontServingValue,
                     fontWeight: FontWeight.w700,
                     color: AppColors.ac,

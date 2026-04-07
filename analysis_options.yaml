@@ -1,0 +1,35 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Style
+    - directives_ordering
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_fields
+    - prefer_final_locals
+    - unnecessary_this
+    - prefer_single_quotes
+
+    # Safety
+    - avoid_dynamic_calls
+    - avoid_print
+    - cancel_subscriptions
+    - close_sinks
+    - always_declare_return_types
+
+    # Readability
+    - sort_constructors_first
+    - sort_unnamed_constructors_first
+    - use_enums
+    - unnecessary_lambdas
+
+analyzer:
+  errors:
+    missing_return: error
+    dead_code: warning
+    unused_import: warning
+    unused_local_variable: warning
+  exclude:
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'

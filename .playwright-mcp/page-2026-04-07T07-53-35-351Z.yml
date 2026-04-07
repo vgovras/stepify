@@ -1,0 +1,63 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Привіт, Славе 👋
+    - generic [ref=e6]:
+      - text: Що будемо
+      - emphasis [ref=e7]: готувати?
+  - generic [ref=e8] [cursor=pointer]:
+    - generic [ref=e9]: 🔍
+    - generic [ref=e10]: Знайти рецепт...
+  - heading "Рецепти" [level=2] [ref=e12]
+  - generic [ref=e14]:
+    - generic [ref=e15] [cursor=pointer]:
+      - generic [ref=e16]: 🍲
+      - generic [ref=e18]: 🟡 Середньо
+      - generic [ref=e19]: 🤍
+      - generic [ref=e20]:
+        - generic [ref=e21]: Борщ Червоний
+        - generic [ref=e22]:
+          - generic [ref=e23]: ⏱ 90 хв
+          - generic [ref=e24]: 🔥 320 ккал
+          - generic [ref=e25]:
+            - generic [ref=e26]: ★★★★★
+            - text: "4.9"
+        - generic [ref=e27]:
+          - generic [ref=e28]: 🇺🇦 Українська
+          - generic [ref=e29]: ⚡ Паралельний
+    - generic [ref=e30] [cursor=pointer]:
+      - generic [ref=e31]: 🍳
+      - generic [ref=e33]: 🟢 Легко
+      - generic [ref=e34]: 🤍
+      - generic [ref=e35]:
+        - generic [ref=e36]: Омлет з начинкою
+        - generic [ref=e37]:
+          - generic [ref=e38]: ⏱ 25 хв
+          - generic [ref=e39]: 🔥 420 ккал
+          - generic [ref=e40]:
+            - generic [ref=e41]: ★★★★★
+            - text: "4.8"
+        - generic [ref=e42]:
+          - generic [ref=e43]: 🥚 Сніданок
+          - generic [ref=e44]: ⚡ Швидко
+    - generic [ref=e45]:
+      - generic [ref=e46]: 🥗
+      - generic [ref=e48]: 🟢 Легко
+      - generic [ref=e49]: Скоро
+      - generic [ref=e50]:
+        - generic [ref=e51]: Цезар з куркою
+        - generic [ref=e52]:
+          - generic [ref=e53]: ⏱ 20 хв
+          - generic [ref=e54]: 🔥 280 ккал
+  - navigation [ref=e55]:
+    - generic [ref=e56] [cursor=pointer]:
+      - generic [ref=e57]: 🏠
+      - generic [ref=e58]: Головна
+    - generic [ref=e59] [cursor=pointer]:
+      - generic [ref=e60]: 🔍
+      - generic [ref=e61]: Пошук
+    - generic [ref=e62] [cursor=pointer]:
+      - generic [ref=e63]: 🛒
+      - generic [ref=e64]: Покупки
+    - generic [ref=e65] [cursor=pointer]:
+      - generic [ref=e66]: 👤
+      - generic [ref=e67]: Профіль

@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sL --max-time 15 \"https://dart.dev/effective-dart/style\")",
+      "Bash(curl -sL --max-time 15 \"https://dart.dev/effective-dart/design\")",
+      "Bash(curl -sL --max-time 15 \"https://dart.dev/effective-dart/usage\")",
+      "Bash(curl -sL --max-time 15 \"https://dart.dev/effective-dart/documentation\")",
+      "Bash(curl -sL --max-time 15 \"https://www.miquido.com/blog/flutter-app-best-practices/\")",
+      "Bash(curl -sL --max-time 15 \"https://docs.flutter.dev/perf/best-practices\")",
+      "Bash(curl -s -L --max-time 15 \"https://api.flutter.dev/flutter/dart-async/Timer-class.html\")",
+      "Bash(curl -s -L --max-time 15 \"https://riverpod.dev/docs/essentials/best_practices\")",
+      "Bash(curl -s -L --max-time 15 \"https://pub.dev/packages/go_router\")",
+      "Bash(curl -s -L --max-time 15 \"https://pub.dev/packages/flutter_local_notifications\")",
+      "Bash(curl -s -L --max-time 15 \"https://pub.dev/packages/hive_flutter\")",
+      "WebFetch(domain:dart.dev)",
+      "WebFetch(domain:www.miquido.com)",
+      "Bash(curl -s -L --max-time 15 \"https://www.anthropic.com/engineering/claude-code-best-practices\")",
+      "Bash(curl -s -L --max-time 15 \"https://docs.cursor.com/chat/overview\")",
+      "WebFetch(domain:www.anthropic.com)",
+      "WebFetch(domain:docs.cursor.com)",
+      "WebSearch",
+      "WebFetch(domain:addyosmani.com)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:forgecode.dev)"
+    ]
+  }
+}

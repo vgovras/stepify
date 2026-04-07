@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CookFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ─────────────────────────────── */
+:root {
+  --bg: #0e0d0b;
+  --s1: #1a1814;
+  --s2: #242118;
+  --br: #2e2b24;
+  --ac: #e8b44c;
+  --ac2: #d4793a;
+  --tx: #f0ead8;
+  --t2: #8a8070;
+  --t3: #5a5448;
+  --gr: #6aaf6a;
+  --rd: #d46060;
+  --r: 18px;
+  --rs: 12px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+
+/* ── OUTER SHELL ─────────────────────────────────── */
+body {
+  background: #050403;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 28px 0 40px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: var(--tx);
+}
+
+/* phone frame */
+.phone {
+  width: 390px;
+  height: 820px;
+  background: var(--bg);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 0 0 1px #2a2520,
+    0 0 0 8px #0a0908,
+    0 0 0 9px #1e1b14,
+    0 0 60px rgba(0,0,0,.8),
+    0 40px 120px rgba(0,0,0,.7);
+}
+
+/* on real mobile — full screen, no frame */
+@media (max-width: 430px) {
+  body { padding: 0; background: var(--bg); }
+  .phone {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* ── SCREEN SYSTEM ───────────────────────────────── */
+/* Every screen fills the phone exactly */
+.screen {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;        /* fills phone height */
+  position: absolute;
+  top: 0; left: 0;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+.screen.s-in  { animation: sIn  .24s cubic-bezier(.4,0,.2,1); }
+.screen.s-back { animation: sBk .24s cubic-bezier(.4,0,.2,1); }
+@keyframes sIn  { from { opacity:0; transform:translateX(28px) } to { opacity:1; transform:none } }
+@keyframes sBk  { from { opacity:0; transform:translateX(-28px)} to { opacity:1; transform:none } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
+@keyframes popIn  { from { opacity:0; transform:scale(.86) } to { opacity:1; transform:scale(1) } }
+@keyframes pulse  { 0%,100% { opacity:1 } 50% { opacity:.45 } }
+@keyframes urgbg  { 0%,100% { background:rgba(212,96,96,.13) } 50% { background:rgba(212,96,96,.26) } }
+@keyframes cf     { 0% { transform:translateY(-10px) rotate(0); opacity:1 }
+                   100% { transform:translateY(860px) rotate(720deg); opacity:0 } }
+
+/* scrollable area inside screens that need it */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ── BOTTOM NAV ──────────────────────────────────── */
+.bnav {
+  flex-shrink: 0;
+  display: flex;
+  background: rgba(14,13,11,.96);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--br);
+  padding: 8px 0 20px;
+}
+.ni {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: all .18s;
+}
+.ni .ic { font-size: 22px; transition: transform .18s; }
+.ni .lb { font-size: 10px; font-weight: 500; color: var(--t3); transition: color .18s; }
+.ni.on .lb { color: var(--ac); }
+.ni.on .ic { transform: scale(1.16); }
+.ni:active .ic { transform: scale(.88); }
+
+/* ── SHARED COMPONENTS ───────────────────────────── */
+.heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.chip-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 20px;
+}
+.chip-row::-webkit-scrollbar { display: none; }
+
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, var(--ac), var(--ac2));
+  color: #0e0d0b;
+  border: none;
+  border-radius: 16px;
+  padding: 17px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(232,180,76,.25);
+  transition: transform .15s, box-shadow .15s;
+  flex-shrink: 0;
+}
+.btn-primary:active { transform: scale(.97); box-shadow: none; }
+
+.btn-ghost {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid var(--br);
+  border-radius: 14px;
+  padding: 14px;
+  color: var(--t2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  transition: all .15s;
+}
+.btn-ghost:active { transform: scale(.97); }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+}
+
+/* tags */
+.tag {
+  background: var(--s2);
+  border: 1px solid var(--br);
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: 10px;
+  color: var(--t2);
+}
+
+/* stat grid */
+.stat-grid {
+  display: flex;
+  border: 1px solid var(--br);
+  border-radius: var(--rs);
+  overflow: hidden;
+  background: var(--br);
+  gap: 1px;
+}
+.stat-cell {
+  flex: 1;
+  background: var(--s1);
+  padding: 12px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.stat-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ac);
+}
+.stat-lbl { font-size: 10px; color: var(--t3); }
+
+/* ── HOME SCREEN ─────────────────────────────────── */
+#s-home {
+  /* home = topbar + scroll + bnav — normal flex column */
+}
+.home-header {
+  flex-shrink: 0;
+  padding: 24px 20px 0;
+}
+.home-greeting { font-size: 13px; color: var(--t2); margin-bottom: 3px; }
+.home-title { font-size: 28px; }
+.home-title em { color: var(--ac); font-style: normal; }
+
+.search-bar {
+  flex-shrink: 0;
+  margin: 16px 20px 0;
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: border-color .18s;
+}
+.search-bar:hover { border-color: var(--ac); }
+.search-bar span { font-size: 14px; color: var(--t3); }
+
+.sec-hd {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 10px;
+}
+.sec-hd h2 { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; }
+.sec-hd a  { font-size: 13px; color: var(--ac); font-weight: 500; cursor: pointer; }
+
+/* category chips */
+.cat-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: var(--s1);
+  border: 1.5px solid var(--br);
+  border-radius: var(--rs);
+  padding: 11px 14px;
+  min-width: 68px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all .18s;
+}
+.cat-chip.on, .cat-chip:hover { border-color: var(--ac); background: rgba(232,180,76,.07); }
+.cat-chip .ce { font-size: 21px; }
+.cat-chip .cn { font-size: 10px; font-weight: 500; color: var(--t2); white-space: nowrap; }
+.cat-chip.on .cn { color: var(--ac); }
+
+/* recipe cards */
+.recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 20px 24px;
+}
+.rcard {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--r);
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: transform .18s, box-shadow .18s;
+}
+.rcard:active { transform: scale(.982); }
+.rcard:hover  { box-shadow: 0 6px 28px rgba(0,0,0,.45); }
+.rcard.locked { opacity: .5; cursor: default; }
+.rcard-img {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  position: relative;
+  overflow: hidden;
+}
+.rcard-img-fade {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(transparent, rgba(14,13,11,.92));
+}
+.diff-badge {
+  position: absolute;
+  top: 10px; left: 10px;
+  background: rgba(14,13,11,.8);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,.07);
+}
+.bm-btn {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(14,13,11,.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .15s;
+}
+.bm-btn:active { transform: scale(.82); }
+.soon-badge {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: rgba(14,13,11,.8);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: 10px;
+  color: var(--t3);
+  border: 1px solid rgba(255,255,255,.05);
+}
+.rcard-body {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rcard-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; line-height: 1.3; }
+.rcard-meta { display: flex; gap: 12px; align-items: center; }
+.rcard-meta-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--t2); }
+.rcard-stars { color: var(--ac); font-size: 11px; }
+.rcard-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ── DETAIL SCREEN ───────────────────────────────── */
+#s-detail {
+  /* flex column: hero image + scroll area */
+}
+.detail-hero {
+  flex-shrink: 0;
+  width: 100%;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 88px;
+  position: relative;
+  overflow: hidden;
+}
+.detail-hero-fade {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 100px;
+  background: linear-gradient(transparent, var(--bg));
+}
+.back-btn {
+  position: absolute;
+  top: 14px; left: 14px;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(14,13,11,.75);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  cursor: pointer;
+  color: var(--tx);
+  transition: transform .15s;
+  z-index: 5;
+}
+.back-btn:active { transform: scale(.88); }
+
+.detail-body { padding: 4px 20px 24px; }
+.detail-title { font-size: 24px; margin-bottom: 3px; }
+.detail-auth  { font-size: 13px; color: var(--t2); margin-bottom: 16px; }
+
+.serving-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rs);
+  padding: 11px 14px;
+  margin-bottom: 14px;
+}
+.srv-label { font-size: 14px; font-weight: 500; }
+.srv-ctrl  { display: flex; align-items: center; gap: 12px; }
+.srv-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--s2);
+  border: 1.5px solid var(--br);
+  color: var(--tx);
+  font-size: 17px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  line-height: 1;
+}
+.srv-btn:active { transform: scale(.88); border-color: var(--ac); }
+.srv-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ac);
+  min-width: 22px;
+  text-align: center;
+}
+
+.section-title { font-size: 15px; font-weight: 600; margin-bottom: 10px; margin-top: 20px; }
+
+.ing-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; }
+.ing-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rs);
+  padding: 10px 13px;
+}
+.ing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ac); flex-shrink: 0; }
+.ing-name { flex: 1; font-size: 14px; }
+.ing-amt  { font-size: 13px; color: var(--t2); font-weight: 500; }
+
+.review-block { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+.rev-item { background: var(--s1); border: 1px solid var(--br); border-radius: var(--rs); padding: 12px; }
+.rev-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.rev-author { font-size: 13px; font-weight: 600; }
+.rev-stars  { color: var(--ac); font-size: 11px; }
+.rev-text   { font-size: 13px; color: var(--t2); line-height: 1.5; }
+
+.star-row { display: flex; gap: 4px; margin-bottom: 4px; }
+.star { font-size: 22px; cursor: pointer; color: var(--t3); transition: color .1s, transform .1s; }
+.star.lit { color: var(--ac); }
+.star:active { transform: scale(1.3); }
+
+/* ── CHECKLIST ───────────────────────────────────── */
+#s-checklist { }
+.chk-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 0;
+}
+.chk-tabs {
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+  padding: 10px 20px 0;
+}
+.chk-tab {
+  flex: 1;
+  padding: 9px 0;
+  border: 1.5px solid var(--br);
+  border-radius: 10px;
+  background: var(--s1);
+  color: var(--t2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .18s;
+}
+.chk-tab.on {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #0e0d0b;
+}
+
+/* огляд кроків */
+.steps-overview {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 20px;
+  gap: 0;
+}
+.sov-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--br);
+}
+.sov-item:last-child { border-bottom: none; }
+.sov-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--s2);
+  border: 1.5px solid var(--br);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--t3);
+  margin-top: 1px;
+}
+.sov-content { flex: 1; }
+.sov-t { font-size: 13px; line-height: 1.45; color: var(--tx); }
+.sov-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  background: rgba(232,180,76,.1);
+  border: 1px solid rgba(232,180,76,.2);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ac);
+}
+.sov-timer.bg { background: rgba(212,121,58,.1); border-color: rgba(212,121,58,.2); color: var(--ac2); }
+
+.chk-title { font-size: 21px; }
+.progress-bar {
+  flex-shrink: 0;
+  height: 3px;
+  background: var(--br);
+  border-radius: 2px;
+  margin: 12px 20px 0;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ac), var(--ac2));
+  border-radius: 2px;
+  transition: width .35s cubic-bezier(.4,0,.2,1);
+}
+.progress-text {
+  flex-shrink: 0;
+  padding: 4px 20px 0;
+  font-size: 11px;
+  color: var(--t3);
+}
+.chk-list { display: flex; flex-direction: column; gap: 7px; padding: 12px 20px; }
+.chk-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--s1);
+  border: 1.5px solid var(--br);
+  border-radius: var(--rs);
+  padding: 12px 13px;
+  cursor: pointer;
+  transition: all .18s;
+}
+.chk-item.on { border-color: var(--gr); background: rgba(106,175,106,.07); }
+.chk-box {
+  width: 24px; height: 24px;
+  border-radius: 7px;
+  border: 2px solid var(--br);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  transition: all .18s;
+}
+.chk-item.on .chk-box { background: var(--gr); border-color: var(--gr); color: #fff; }
+.chk-name { font-size: 14px; font-weight: 500; flex: 1; }
+.chk-item.on .chk-name { text-decoration: line-through; color: var(--t3); }
+.chk-qty { font-size: 12px; color: var(--t2); }
+
+.chk-footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 20px 22px;
+}
+
+/* ── COOKING: OVERVIEW ───────────────────────────── */
+#s-overview {
+  /* flex column: fbars + topbar + dots + title + scroll(cards+tips) + start-btn */
+}
+.fbar-stack { flex-shrink: 0; display: flex; flex-direction: column; }
+.fbar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  background: rgba(16,13,8,.97);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(232,180,76,.18);
+  cursor: pointer;
+  min-height: 38px;
+  flex-shrink: 0;
+}
+.fbar.show { display: flex; }
+.fbar.urg { animation: urgbg 1s ease infinite; border-bottom-color: rgba(212,96,96,.4); }
+.fdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; animation: pulse 1.4s ease infinite; }
+.fbar:not(.urg) .fdot { background: var(--ac); }
+.fbar.urg .fdot { background: var(--rd); }
+.fnm  { flex: 1; font-size: 11px; color: var(--t2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ftime {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.fbar:not(.urg) .ftime { color: var(--ac); }
+.fbar.urg .ftime { color: var(--rd); }
+.farr { font-size: 11px; color: var(--t3); flex-shrink: 0; }
+
+/* ── COOKING SCREEN ──────────────────────────────── */
+#s-cook { }
+
+.cook-topbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px 0;
+}
+.cook-exit-btn {
+  background: none; border: none;
+  color: var(--t2); font-size: 19px;
+  cursor: pointer; padding: 4px; line-height: 1; flex-shrink: 0;
+}
+.cook-progress-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.cook-progress-bar {
+  height: 3px;
+  background: var(--br);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.cook-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ac), var(--ac2));
+  border-radius: 2px;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+.cook-progress-txt {
+  font-size: 11px;
+  color: var(--t3);
+  text-align: right;
+}
+
+/* ── STEP CARD ──────────────────────────────────── */
+/* заповнює весь простір між topbar і кнопкою */
+.step-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 0;
+  animation: fadeUp .2s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+.step-card::-webkit-scrollbar { display: none; }
+
+.step-num {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+.step-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+/* note — важлива підказка */
+.step-note {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.step-note.warn { background: rgba(212,96,96,.08); border: 1px solid rgba(212,96,96,.2); }
+.step-note.tip  { background: rgba(232,180,76,.07); border: 1px solid rgba(232,180,76,.15); color: var(--t2); }
+.step-note.pro  { background: rgba(106,175,106,.07); border: 1px solid rgba(106,175,106,.15); color: var(--t2); }
+
+/* таймер всередині картки */
+.step-timer {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(232,180,76,.11), rgba(212,121,58,.07));
+  border: 1.5px solid rgba(232,180,76,.26);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: border-color .25s;
+}
+.step-timer.run   { border-color: rgba(232,180,76,.55); }
+.step-timer.done  { border-color: rgba(106,175,106,.4); }
+
+.step-timer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.step-timer-label { font-size: 11px; color: var(--t3); font-weight: 600; text-transform: uppercase; letter-spacing: .9px; }
+.step-timer-bg-note { font-size: 11px; color: var(--ac2); font-weight: 600; margin-top: 3px; }
+.step-timer-dig {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px; font-weight: 700;
+  color: var(--ac);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.step-timer-dig.urg { color: var(--rd); animation: pulse 1s ease infinite; }
+.step-timer-dig.fin { color: var(--gr); }
+
+.step-timer-track { height: 3px; background: var(--br); border-radius: 2px; overflow: hidden; }
+.step-timer-fill  { height: 100%; background: linear-gradient(90deg, var(--ac), var(--ac2)); border-radius: 2px; transition: width 1s linear; }
+.step-timer-btns  { display: flex; gap: 8px; margin-top: 10px; }
+
+.tbtn {
+  border: none; border-radius: 11px; padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 5px; transition: transform .15s; flex-shrink: 0;
+}
+.tbtn:active { transform: scale(.94); }
+.tbtn.pl { background: var(--ac); color: #0e0d0b; flex: 1; }
+.tbtn.pa { background: rgba(212,96,96,.12); border: 1.5px solid var(--rd); color: var(--rd); flex: 1; }
+.tbtn.rs { background: var(--s2); color: var(--t2); border: 1.5px solid var(--br); }
+.tbtn.fn { background: rgba(106,175,106,.14); border: 1.5px solid var(--gr); color: var(--gr); flex: 1; }
+
+/* floating timer bars */
+.fbar-stack { flex-shrink: 0; display: flex; flex-direction: column; }
+.fbar {
+  display: none; align-items: center; gap: 10px;
+  padding: 9px 16px;
+  background: rgba(16,13,8,.97); backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(232,180,76,.18);
+  cursor: pointer; min-height: 38px; flex-shrink: 0;
+}
+.fbar.show { display: flex; }
+.fbar.urg { animation: urgbg 1s ease infinite; border-bottom-color: rgba(212,96,96,.4); }
+@keyframes urgbg { 0%,100%{background:rgba(212,96,96,.13)} 50%{background:rgba(212,96,96,.26)} }
+.fdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; animation: pulse 1.4s ease infinite; }
+.fbar:not(.urg) .fdot { background: var(--ac); }
+.fbar.urg .fdot { background: var(--rd); }
+.fnm  { flex: 1; font-size: 11px; color: var(--t2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ftime {
+  font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700;
+  font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+.fbar:not(.urg) .ftime { color: var(--ac); }
+.fbar.urg .ftime { color: var(--rd); }
+
+.cook-footer { flex-shrink: 0; padding: 8px 20px 22px; }
+
+/* ── DONE SCREEN ─────────────────────────────────── */
+#s-done {
+  align-items: center;
+  justify-content: center;
+}
+.done-inner {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 24px; text-align: center;
+  position: relative; overflow: hidden; width: 100%;
+}
+.confetti-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.cp { position: absolute; border-radius: 2px; animation: cf linear forwards; }
+.done-emoji { font-size: 68px; margin-bottom: 16px; animation: popIn .5s .1s both; position: relative; z-index: 1; }
+.done-title { font-size: 28px; margin-bottom: 8px; position: relative; z-index: 1; }
+.done-sub   { font-size: 14px; color: var(--t2); margin-bottom: 24px; line-height: 1.6; position: relative; z-index: 1; }
+.done-stats {
+  display: flex; gap: 12px; margin-bottom: 24px;
+  position: relative; z-index: 1; width: 100%;
+}
+.done-stat {
+  flex: 1;
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rs);
+  padding: 12px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.done-stat-val { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--ac); }
+.done-stat-lbl { font-size: 10px; color: var(--t3); }
+.done-actions { display: flex; flex-direction: column; gap: 8px; width: 100%; position: relative; z-index: 1; }
+
+/* ── SHOPPING ────────────────────────────────────── */
+#s-shopping { }
+.shop-header  { flex-shrink: 0; padding: 22px 20px 0; }
+.shop-title   { font-size: 24px; }
+.shop-sub     { font-size: 13px; color: var(--t2); margin-top: 3px; }
+.shop-badge   {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(232,180,76,.1);
+  border: 1px solid rgba(232,180,76,.2);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--ac);
+  font-weight: 500;
+  margin-top: 6px;
+}
+.shop-group       { margin: 16px 20px 0; }
+.shop-group-label { font-size: 10px; font-weight: 600; color: var(--t3); text-transform: uppercase; letter-spacing: 1.1px; margin-bottom: 7px; }
+.shop-items       { display: flex; flex-direction: column; gap: 6px; }
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rs);
+  padding: 11px 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.shop-item.bought { opacity: .4; background: transparent; }
+.shop-item.bought .shop-nm { text-decoration: line-through; }
+.shop-chk {
+  width: 21px; height: 21px;
+  border-radius: 6px;
+  border: 2px solid var(--br);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  transition: all .18s;
+}
+.shop-item.bought .shop-chk { background: var(--gr); border-color: var(--gr); color: #fff; }
+.shop-nm { flex: 1; font-size: 14px; }
+.shop-qt { font-size: 12px; color: var(--t2); }
+
+/* ── PROFILE ─────────────────────────────────────── */
+#s-profile { }
+.prof-header {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px 0;
+}
+.avatar {
+  width: 78px; height: 78px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ac), var(--ac2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--ac);
+}
+.prof-name { font-size: 21px; }
+.prof-sub  { font-size: 13px; color: var(--t2); margin-top: 3px; }
+.prof-stats {
+  display: flex;
+  flex-shrink: 0;
+  margin: 14px 20px 0;
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rs);
+  overflow: hidden;
+}
+.prof-stat {
+  flex: 1;
+  padding: 13px 8px;
+  text-align: center;
+  border-right: 1px solid var(--br);
+  display: flex; flex-direction: column; gap: 3px;
+}
+.prof-stat:last-child { border-right: none; }
+.prof-stat-val { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; color: var(--ac); }
+.prof-stat-lbl { font-size: 10px; color: var(--t3); }
+.menu-list { flex-shrink: 0; padding: 12px 20px; display: flex; flex-direction: column; gap: 7px; }
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: var(--rs);
+  padding: 14px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.menu-item:active { background: var(--s2); }
+.menu-badge { background: rgba(232,180,76,.15); color: var(--ac); font-size: 11px; font-weight: 600; border-radius: 20px; padding: 2px 8px; }
+
+/* ── DIALOG / MODAL ──────────────────────────────── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px);
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+}
+.overlay.show { display: flex; }
+.dialog {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: 22px;
+  padding: 26px 22px;
+  width: 100%;
+  animation: popIn .2s ease;
+}
+.dialog-emoji { font-size: 38px; text-align: center; margin-bottom: 10px; }
+.dialog-title { font-size: 19px; text-align: center; margin-bottom: 7px; }
+.dialog-sub   { font-size: 14px; color: var(--t2); text-align: center; margin-bottom: 20px; line-height: 1.5; }
+.dialog-btns  { display: flex; flex-direction: column; gap: 8px; }
+.btn-cancel  { background: var(--s2); color: var(--tx); border: 1.5px solid var(--br); border-radius: 13px; padding: 13px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: transform .15s; width: 100%; }
+.btn-confirm { background: var(--rd); color: #fff; border: none; border-radius: 13px; padding: 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform .15s; width: 100%; }
+.btn-cancel:active, .btn-confirm:active { transform: scale(.97); }
+
+.sheet-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(5px);
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+}
+.sheet-overlay.show { display: flex; }
+.bottom-sheet {
+  background: var(--s1);
+  border: 1px solid var(--br);
+  border-radius: 26px 26px 0 0;
+  padding: 24px 22px 38px;
+  width: 100%;
+  animation: sheetUp .28s cubic-bezier(.4,0,.2,1);
+}
+@keyframes sheetUp { from { transform: translateY(100%) } to { transform: none } }
+.sheet-handle { width: 34px; height: 4px; background: var(--br); border-radius: 2px; margin: 0 auto 18px; }
+.sheet-title  { font-size: 19px; margin-bottom: 5px; }
+.sheet-sub    { font-size: 14px; color: var(--t2); margin-bottom: 16px; }
+.mstars { display: flex; gap: 6px; margin-bottom: 16px; }
+.mstar  { font-size: 33px; cursor: pointer; opacity: .25; transition: all .15s; }
+.mstar.lit { opacity: 1; }
+.mstar:active { transform: scale(1.22); }
+.com-input {
+  width: 100%;
+  background: var(--s2);
+  border: 1.5px solid var(--br);
+  color: var(--tx);
+  border-radius: 13px;
+  padding: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  resize: none;
+  height: 84px;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .18s;
+}
+.com-input:focus { border-color: var(--ac); }
+.com-input::placeholder { color: var(--t3); }
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast {
+  position: absolute;
+  bottom: 86px;
+  left: 20px;
+  right: 20px;
+  background: rgba(34,30,20,.97);
+  border: 1px solid var(--br);
+  backdrop-filter: blur(12px);
+  border-radius: 13px;
+  padding: 12px 15px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(7px);
+  transition: all .26s;
+  z-index: 500;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+
+<!-- ══════════ HOME ══════════ -->
+<div class="screen active" id="s-home">
+  <div class="home-header">
+    <div class="home-greeting">Привіт, Славе 👋</div>
+    <div class="heading home-title">Що будемо<br><em>готувати?</em></div>
+  </div>
+  <div class="search-bar" onclick="toast('🔍 Пошук в розробці')">
+    <span>🔍</span><span>Знайти рецепт...</span>
+  </div>
+  <div class="sec-hd"><h2>Рецепти</h2></div>
+  <div class="scroll-area">
+    <div class="recipe-list">
+
+      <div class="rcard" data-cat="soup" onclick="openRecipe(0)">
+        <div class="rcard-img" style="background:linear-gradient(135deg,#3d1010,#1a0808)">
+          🍲<div class="rcard-img-fade"></div>
+        </div>
+        <div class="diff-badge">🟡 Середньо</div>
+        <div class="bm-btn" onclick="event.stopPropagation();tbm(this)">🤍</div>
+        <div class="rcard-body">
+          <div class="rcard-name">Борщ Червоний</div>
+          <div class="rcard-meta">
+            <div class="rcard-meta-item">⏱ 90 хв</div>
+            <div class="rcard-meta-item">🔥 320 ккал</div>
+            <div class="rcard-meta-item"><span class="rcard-stars">★★★★★</span>&nbsp;4.9</div>
+          </div>
+          <div class="rcard-tags">
+            <span class="tag">🇺🇦 Українська</span>
+            <span class="tag">⚡ Паралельний</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rcard" data-cat="main" onclick="openRecipe(1)">
+        <div class="rcard-img" style="background:linear-gradient(135deg,#2a1f08,#1a1204)">
+          🍳<div class="rcard-img-fade"></div>
+        </div>
+        <div class="diff-badge">🟢 Легко</div>
+        <div class="bm-btn" onclick="event.stopPropagation();tbm(this)">🤍</div>
+        <div class="rcard-body">
+          <div class="rcard-name">Омлет з начинкою</div>
+          <div class="rcard-meta">
+            <div class="rcard-meta-item">⏱ 25 хв</div>
+            <div class="rcard-meta-item">🔥 420 ккал</div>
+            <div class="rcard-meta-item"><span class="rcard-stars">★★★★★</span>&nbsp;4.8</div>
+          </div>
+          <div class="rcard-tags">
+            <span class="tag">🥚 Сніданок</span>
+            <span class="tag">⚡ Швидко</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rcard locked" data-cat="salad" onclick="toast('🚧 Скоро')">
+        <div class="rcard-img" style="background:linear-gradient(135deg,#0f2010,#080e08)">🥗<div class="rcard-img-fade"></div></div>
+        <div class="diff-badge">🟢 Легко</div><div class="soon-badge">Скоро</div>
+        <div class="rcard-body">
+          <div class="rcard-name">Цезар з куркою</div>
+          <div class="rcard-meta"><div class="rcard-meta-item">⏱ 20 хв</div><div class="rcard-meta-item">🔥 280 ккал</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <nav class="bnav">
+    <div class="ni on" onclick="navTo(0)"><div class="ic">🏠</div><div class="lb">Головна</div></div>
+    <div class="ni" onclick="navTo(1)"><div class="ic">🔍</div><div class="lb">Пошук</div></div>
+    <div class="ni" onclick="navTo(2)"><div class="ic">🛒</div><div class="lb">Покупки</div></div>
+    <div class="ni" onclick="navTo(3)"><div class="ic">👤</div><div class="lb">Профіль</div></div>
+  </nav>
+</div>
+
+<!-- ══════════ DETAIL ══════════ -->
+<div class="screen" id="s-detail">
+  <div class="detail-hero" id="d-hero" style="background:linear-gradient(135deg,#3d1010,#1a0808)">
+    <span style="font-size:88px">🍲</span>
+    <div class="back-btn" onclick="navBack()">←</div>
+    <div class="detail-hero-fade"></div>
+  </div>
+  <div class="scroll-area">
+    <div class="detail-body">
+      <div class="heading detail-title" id="detail-recipe-name">Борщ Червоний</div>
+      <div class="detail-auth">👨‍🍳 Традиційний рецепт · ⭐ 4.9 (234 відгуки)</div>
+      <div class="serving-row">
+        <span class="srv-label">Порції</span>
+        <div class="srv-ctrl">
+          <button class="srv-btn" onclick="chgSrv(-1)">−</button>
+          <div class="srv-val" id="srv-val">4</div>
+          <button class="srv-btn" onclick="chgSrv(1)">+</button>
+        </div>
+      </div>
+      <div class="stat-grid" style="margin-bottom:18px">
+        <div class="stat-cell"><div class="stat-val" id="detail-time">90</div><div class="stat-lbl">хвилин</div></div>
+        <div class="stat-cell"><div class="stat-val" id="detail-kcal">320</div><div class="stat-lbl">ккал/порц</div></div>
+        <div class="stat-cell"><div class="stat-val">🟡</div><div class="stat-lbl">складність</div></div>
+      </div>
+      <div class="section-title">Інгредієнти</div>
+      <div class="ing-list" id="d-ing"></div>
+      <button class="btn-primary" onclick="startChecklist()">🛒 Перевірити інгредієнти</button>
+      <div class="section-title">Ваша оцінка</div>
+      <div class="star-row" id="ustars">
+        <span class="star" onclick="setR(1)">★</span><span class="star" onclick="setR(2)">★</span>
+        <span class="star" onclick="setR(3)">★</span><span class="star" onclick="setR(4)">★</span>
+        <span class="star" onclick="setR(5)">★</span>
+      </div>
+      <div class="review-block">
+        <div class="rev-item"><div class="rev-header"><div class="rev-author">Оксана Г.</div><div class="rev-stars">★★★★★</div></div><div class="rev-text">Підказка про картоплю в холодній воді — врятувало! Паралельні кроки заощадили купу часу.</div></div>
+        <div class="rev-item"><div class="rev-header"><div class="rev-author">Михайло Р.</div><div class="rev-stars">★★★★★</div></div><div class="rev-text">Вперше зварив борщ і вийшло ідеально. Таймери — просто вогонь 🔥</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ CHECKLIST ══════════ -->
+<div class="screen" id="s-checklist">
+  <div class="chk-header">
+    <div class="back-btn" style="position:relative;top:auto;left:auto" onclick="navBack()">←</div>
+    <div class="heading chk-title">Перед готуванням</div>
+  </div>
+  <!-- таби -->
+  <div class="chk-tabs">
+    <button class="chk-tab on" id="tab-ing" onclick="switchTab('ing')">🛒 Інгредієнти</button>
+    <button class="chk-tab"    id="tab-steps" onclick="switchTab('steps')">📋 Кроки</button>
+  </div>
+  <!-- панель інгредієнтів -->
+  <div id="tab-panel-ing">
+    <div class="progress-bar"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
+    <div class="progress-text" id="ptxt">0 з 9 є вдома</div>
+    <div class="scroll-area">
+      <div class="chk-list" id="chklist"></div>
+      <div id="missnote" style="display:none;margin:0 20px 10px;padding:10px 13px;background:rgba(212,121,58,.08);border:1px solid rgba(212,121,58,.2);border-radius:var(--rs);font-size:13px;color:var(--t2)">
+        🛒 Відсутні додані до покупок
+      </div>
+      <div style="padding:0 20px 8px">
+        <button class="btn-ghost" onclick="addMiss()">🛒 Додати відсутні до покупок</button>
+      </div>
+    </div>
+  </div>
+  <!-- панель кроків -->
+  <div id="tab-panel-steps" style="display:none;flex:1;min-height:0;display:none;flex-direction:column;">
+    <div class="scroll-area">
+      <div class="steps-overview" id="steps-overview"></div>
+    </div>
+  </div>
+  <div class="chk-footer">
+    <button class="btn-primary" onclick="startCooking()">🍳 Починаємо готувати →</button>
+  </div>
+</div>
+
+<!-- ══════════ COOK ══════════ -->
+<div class="screen" id="s-cook">
+  <!-- активні таймери у фоні — завжди видно -->
+  <div class="fbar-stack" id="cook-fbars"></div>
+  <!-- топ-бар: прогрес + вихід -->
+  <div class="cook-topbar">
+    <button class="cook-exit-btn" onclick="showExitDlg()">✕</button>
+    <div class="cook-progress-wrap">
+      <div class="cook-progress-bar"><div class="cook-progress-fill" id="cook-prog-fill"></div></div>
+      <div class="cook-progress-txt" id="cook-prog-txt">1 / 28</div>
+    </div>
+  </div>
+  <!-- картка поточного кроку -->
+  <div class="step-card" id="step-card"></div>
+  <!-- кнопка -->
+  <div class="cook-footer">
+    <button class="btn-primary" id="cook-btn" onclick="stepDone()">Готово ✓</button>
+  </div>
+</div>
+
+<!-- ══════════ DONE ══════════ -->
+<div class="screen" id="s-done">
+  <div class="done-inner">
+    <div class="confetti-layer" id="confetti"></div>
+    <div class="done-emoji">🎉</div>
+    <div class="heading done-title">Смачного!</div>
+    <div class="done-sub">Борщ Червоний готовий.<br>Ви чудово впорались!</div>
+    <div class="done-stats">
+      <div class="done-stat"><div class="done-stat-val">2.5</div><div class="done-stat-lbl">години</div></div>
+      <div class="done-stat"><div class="done-stat-val" id="done-srv">4</div><div class="done-stat-lbl">порції</div></div>
+      <div class="done-stat"><div class="done-stat-val">+1</div><div class="done-stat-lbl">страва</div></div>
+    </div>
+    <div class="done-actions">
+      <button class="btn-primary" onclick="openRate()">⭐ Оцінити рецепт</button>
+      <button class="btn-ghost" onclick="toast('📋 Скопійовано')">📤 Поділитись</button>
+      <button class="btn-ghost" onclick="goHome()">🏠 На головну</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SHOPPING ══════════ -->
+<div class="screen" id="s-shopping">
+  <div class="shop-header">
+    <div class="heading shop-title">Список покупок</div>
+    <div class="shop-sub">Оновлено щойно</div>
+    <div class="shop-badge" id="spbadge">🛒 4 позиції</div>
+  </div>
+  <div class="scroll-area">
+    <div id="spbody"></div>
+    <div style="height:16px"></div>
+  </div>
+  <nav class="bnav">
+    <div class="ni" onclick="navTo(0)"><div class="ic">🏠</div><div class="lb">Головна</div></div>
+    <div class="ni" onclick="navTo(1)"><div class="ic">🔍</div><div class="lb">Пошук</div></div>
+    <div class="ni on" onclick="navTo(2)"><div class="ic">🛒</div><div class="lb">Покупки</div></div>
+    <div class="ni" onclick="navTo(3)"><div class="ic">👤</div><div class="lb">Профіль</div></div>
+  </nav>
+</div>
+
+<!-- ══════════ PROFILE ══════════ -->
+<div class="screen" id="s-profile">
+  <div class="prof-header">
+    <div class="avatar">👨‍🍳</div>
+    <div class="heading prof-name">Слав</div>
+    <div class="prof-sub">Кулінар-ентузіаст · квітень 2026</div>
+  </div>
+  <div class="prof-stats">
+    <div class="prof-stat"><div class="prof-stat-val" id="p-cooked">12</div><div class="prof-stat-lbl">Приготовлено</div></div>
+    <div class="prof-stat"><div class="prof-stat-val">5</div><div class="prof-stat-lbl">Збережено</div></div>
+    <div class="prof-stat"><div class="prof-stat-val">2</div><div class="prof-stat-lbl">Мої рецепти</div></div>
+  </div>
+  <div class="scroll-area">
+    <div class="menu-list">
+      <div class="menu-item" onclick="toast('Незабаром...')"><span style="font-size:20px">📖</span><span style="flex:1;font-size:14px;font-weight:500">Мої рецепти</span><span class="menu-badge">2</span></div>
+      <div class="menu-item" onclick="toast('Незабаром...')"><span style="font-size:20px">❤️</span><span style="flex:1;font-size:14px;font-weight:500">Збережені</span><span class="menu-badge">5</span></div>
+      <div class="menu-item" onclick="toast('Незабаром...')"><span style="font-size:20px">🏆</span><span style="flex:1;font-size:14px;font-weight:500">Приготовлені</span><span class="menu-badge" id="pbadge">12</span></div>
+      <div class="menu-item" onclick="toast('Незабаром...')"><span style="font-size:20px">➕</span><span style="flex:1;font-size:14px;font-weight:500">Додати рецепт</span><span style="color:var(--t3)">→</span></div>
+      <div class="menu-item" onclick="toast('Незабаром...')"><span style="font-size:20px">⚙️</span><span style="flex:1;font-size:14px;font-weight:500">Налаштування</span><span style="color:var(--t3)">→</span></div>
+    </div>
+  </div>
+  <nav class="bnav">
+    <div class="ni" onclick="navTo(0)"><div class="ic">🏠</div><div class="lb">Головна</div></div>
+    <div class="ni" onclick="navTo(1)"><div class="ic">🔍</div><div class="lb">Пошук</div></div>
+    <div class="ni" onclick="navTo(2)"><div class="ic">🛒</div><div class="lb">Покупки</div></div>
+    <div class="ni on" onclick="navTo(3)"><div class="ic">👤</div><div class="lb">Профіль</div></div>
+  </nav>
+</div>
+
+<!-- EXIT DIALOG -->
+<div class="overlay" id="exit-dlg">
+  <div class="dialog">
+    <div class="dialog-emoji">🍳</div>
+    <div class="heading dialog-title">Зупинити?</div>
+    <div class="dialog-sub">Прогрес і таймери зупиняться.</div>
+    <div class="dialog-btns">
+      <button class="btn-cancel"  onclick="hideDlg()">Продовжити готувати</button>
+      <button class="btn-confirm" onclick="exitCooking()">Так, зупинити</button>
+    </div>
+  </div>
+</div>
+
+<!-- RATE SHEET -->
+<div class="sheet-overlay" id="rate-sheet" onclick="closeRate(event)">
+  <div class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="heading sheet-title">Як вийшло? 🍲</div>
+    <div class="sheet-sub">Ваш відгук допомагає іншим</div>
+    <div class="mstars" id="mstars">
+      <span class="mstar" onclick="setMR(1)">★</span><span class="mstar" onclick="setMR(2)">★</span>
+      <span class="mstar" onclick="setMR(3)">★</span><span class="mstar" onclick="setMR(4)">★</span>
+      <span class="mstar" onclick="setMR(5)">★</span>
+    </div>
+    <textarea class="com-input" placeholder="Як вийшло? Що змінили?"></textarea>
+    <button class="btn-primary" onclick="submitRate()">Відправити відгук</button>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+</div><!-- /phone -->
+<script>
+// ═══════════════════════════════════════
+// RECIPE DATA
+// ═══════════════════════════════════════
+const R_BORSCHT = {
+  name:'Борщ Червоний', emoji:'🍲', baseServings:4,
+  // За рецептами klopotenko.com і nfront.org.ua
+  ingredients:[
+    {n:'Яловичина або свинина на кістці', u:'г',    a:500,  h:false, c:'meat'},
+    {n:'Буряк середній',                 u:'шт',   a:2,    h:false, c:'vegs'},
+    {n:'Картопля',                       u:'шт',   a:4,    h:false, c:'vegs'},
+    {n:'Капуста свіжа',                  u:'г',    a:300,  h:false, c:'vegs'},
+    {n:'Морква',                         u:'шт',   a:1,    h:false, c:'vegs'},
+    {n:'Цибуля ріпчаста',                u:'шт',   a:1,    h:false, c:'vegs'},
+    {n:'Томатна паста',                  u:'ст.л.',a:2,    h:false, c:'other'},
+    {n:'Олія соняшникова',               u:'ст.л.',a:3,    h:false, c:'other'},
+    {n:'Часник',                         u:'зубч.',a:3,    h:false, c:'vegs'},
+    {n:'Лимонна кислота або оцет',       u:'ч.л.', a:1,    h:false, c:'other'},
+    {n:'Цукор',                          u:'ч.л.', a:1,    h:false, c:'other'},
+    {n:'Лавровий лист',                  u:'шт',   a:2,    h:false, c:'other'},
+    {n:'Перець горошком',                u:'шт',   a:5,    h:false, c:'other'},
+    {n:'Сіль',                           u:'ч.л.', a:1.5,  h:false, c:'other'},
+    {n:'Сметана (для подачі)',            u:'г',    a:100,  h:false, c:'dairy'},
+    {n:'Кріп або петрушка',              u:'пучок',a:0.5,  h:false, c:'vegs'},
+  ],
+  phases:[
+    // ── Фаза 0: М'ясо ───────────────────────────────
+    {id:0, title:'Готуємо м\'ясо', emoji:'🥩', parallel:null,
+     tips:[
+       {t:'i', x:'💡 М\'ясо на кістці — краще. Кістка дає наваристість і смак бульйону'},
+       {t:'i', x:'💡 Підходять: яловичі або свинячі ребра, лопатка, грудинка'},
+       {t:'i', x:'💡 Поки м\'ясо прогрівається — можете займатися іншими справами'},
+     ],
+     sub:[
+       {t:'Вийміть м\'ясо з холодильника і покладіть на тарілку', ph:'🥩', h:'Хай прогрівається до кімнатної температури', n:'⚠️ Не розморожуйте в мікрохвильовці — зіпсує структуру', tmr:{m:20, l:'М\'ясо прогрівається', bg:true}},
+       {t:'Ретельно промийте м\'ясо під холодною водою', ph:'💧', h:'Чисте м\'ясо = прозорий бульйон', n:null, tmr:null},
+     ]},
+    // ── Фаза 1: Бульйон ─────────────────────────────
+    {id:1, title:'Варимо бульйон', emoji:'🫕', parallel:null,
+     tips:[
+       {t:'w', x:'⚠️ Не накривайте кришкою поки є піна — пропустите момент'},
+       {t:'w', x:'⚠️ Сильне кипіння = каламутний бульйон. Тільки ледве тремтить!'},
+       {t:'i', x:'💡 Запустіть таймер і переходьте до нарізки та засмажки — все паралельно'},
+     ],
+     sub:[
+       {t:'Залийте м\'ясо 3 л холодної води в каструлі 5–6 л', ph:'💧', h:'Саме холодна вода — секрет прозорого бульйону', n:'💡 Гаряча вода дає каламутний бульйон', tmr:null},
+       {t:'Доведіть до кипіння на середньому вогні', ph:'🔥', h:'Слідкуйте — зараз почне з\'являтися піна', n:null, tmr:{m:10, l:'Вода закипає', bg:false}},
+       {t:'Знімайте сіру піну шумівкою — до чистого бульйону', ph:'🫧', h:'Повторюйте поки піна не припиниться', n:'⚠️ Не відходьте — піна з\'являється швидко', tmr:null},
+       {t:'Додайте лавровий лист (2 шт), перець горошком (5 шт)', ph:'🌿', h:'Ці спеції дають базовий аромат', n:null, tmr:null},
+       {t:'Зменшіть вогонь до мінімуму, накрийте кришкою — вариться 1.5 год', ph:'⏳', h:'М\'ясо готове коли легко відділяється від кістки', n:null, tmr:{m:90, l:'Бульйон вариться', bg:true}},
+     ]},
+    // ── Фаза 2: Нарізка (паралельно з бульйоном) ───
+    {id:2, title:'Нарізаємо овочі', emoji:'🔪', parallel:{sid:1, l:'Бульйон вариться'},
+     tips:[
+       {t:'w', x:'⚠️ Буряк фарбує все — рукавички або намастіть руки олією'},
+       {t:'i', x:'💡 Однаковий розмір нарізки = все готується рівномірно'},
+     ],
+     sub:[
+       {t:'Картопля (4 шт): кубиками ~2×2 см', ph:'🥔', h:'Кубики тримають форму', n:null, tmr:null},
+       {t:'ОДРАЗУ картоплю в миску з холодною водою', ph:'💧', h:'Не потемніє і не злипнеться', n:'⚠️ Без цього почорніє за 5–10 хвилин', tmr:null},
+       {t:'Буряк (2 шт): натріть на крупній тертці', ph:'🟣', h:'Тертка дає більше соку = яскравіший борщ', n:null, tmr:null},
+       {t:'Морква (1 шт): натріть на крупній тертці', ph:'🥕', h:'Крупна тертка — не дрібна', n:null, tmr:null},
+       {t:'Цибуля (1 шт): дрібні кубики ~5 мм', ph:'🧅', h:'Дрібно = рівномірна смага', n:null, tmr:null},
+       {t:'Капуста (300 г): тонко нашинкуйте ~3 мм', ph:'🥬', h:'Тонко = не хрустить у готовому борщі', n:null, tmr:null},
+       {t:'Часник (3 зубчики): розчавіть лезом ножа або порубайте', ph:'🧄', h:'Часник іде в кінці — зараз тільки підготуйте', n:null, tmr:null},
+     ]},
+    // ── Фаза 3: Засмажка (паралельно з бульйоном) ──
+    {id:3, title:'Робимо засмажку', emoji:'🍳', parallel:{sid:1, l:'Бульйон вариться'},
+     tips:[
+       {t:'w', x:'⚠️ Коричнева цибуля гірчить — тільки золотиста!'},
+       {t:'w', x:'⚠️ Буряк без оцту втратить колір при варінні — борщ стане коричневим'},
+       {t:'i', x:'💡 Всі овочі смажаться в одній сковорідці по черзі — так правильно'},
+     ],
+     sub:[
+       {t:'Розігрійте сковорідку, налийте 3 ст.л. олії', ph:'🍳', h:'Добре розігріта — смага рівномірна', n:null, tmr:null},
+       {t:'Цибуля і морква — смажте 5 хв, помішуючи', ph:'🧅', h:'До м\'якості і золотистого кольору цибулі', n:null, tmr:{m:5, l:'Цибуля і морква смажаться', bg:false}},
+       {t:'Додайте натертий буряк', ph:'🟣', h:'Буряк виділить яскравий сік — це правильно', n:null, tmr:null},
+       {t:'Додайте 1 ч.л. лимонної кислоти або оцту', ph:'🍋', h:'Фіксує яскраво-червоний колір буряка', n:'⚠️ Без цього борщ стане бурим після варіння', tmr:null},
+       {t:'Додайте 1 ч.л. цукру і перемішайте', ph:'🥄', h:'Цукор балансує кислоту лимонної кислоти', n:null, tmr:null},
+       {t:'Додайте 2 ст.л. томатної пасти, тушкуйте 5–7 хв', ph:'🍅', h:'Паста темніє і загусне — карамелізація, це добре', n:null, tmr:{m:6, l:'Засмажка тушкується', bg:false}},
+       {t:'Зніміть з вогню — засмажка готова', ph:'🫕', h:'Бордово-помаранчева і ароматна', n:null, tmr:null},
+     ]},
+    // ── Фаза 4: Збираємо борщ ───────────────────────
+    {id:4, title:'Збираємо борщ', emoji:'🍲', parallel:null,
+     tips:[
+       {t:'w', x:'⚠️ Капуста першою — їй треба більше часу ніж картоплі'},
+       {t:'i', x:'💡 Пробуйте на сіль тільки після засмажки — вона дає кислоту'},
+       {t:'p', x:'🏆 Якщо бульйон каламутний — процідіть через сито перед складанням'},
+     ],
+     sub:[
+       {t:'Дістаньте м\'ясо з бульйону шумівкою на дошку', ph:'🥩', h:'Хай трохи охолоне — буде легше різати', n:null, tmr:null},
+       {t:'Вийміть і викиньте лавровий лист', ph:'🌿', h:'Він своє зробив — далі тільки гірчить', n:null, tmr:null},
+       {t:'Додайте нашатковану капусту в киплячий бульйон', ph:'🥬', h:'Капуста першою — вона найдовше готується', n:null, tmr:null},
+       {t:'Варіть 5 хвилин', ph:'♨️', h:'Капуста починає м\'якнути', n:null, tmr:{m:5, l:'Капуста вариться', bg:false}},
+       {t:'Додайте картоплю (злийте воду з миски)', ph:'🥔', h:'Злегка побіліла від крохмалю — це нормально', n:null, tmr:null},
+       {t:'Варіть картоплю 10 хвилин', ph:'🍲', h:'До напівготовності — дійде з засмажкою', n:null, tmr:{m:10, l:'Картопля вариться', bg:false}},
+       {t:'Додайте всю засмажку — перемішайте', ph:'🍲', h:'Борщ одразу стане яскраво-червоним!', n:null, tmr:null},
+       {t:'Посоліть, спробуйте на смак, доведіть до кипіння', ph:'🧂', h:'Трохи солонуватий — правильно, при настоюванні смак м\'якне', n:null, tmr:null},
+       {t:'Варіть ще 10 хвилин на слабкому вогні', ph:'🫧', h:'Всі смаки з\'єднуються', n:null, tmr:{m:10, l:'Борщ доварюється', bg:false}},
+     ]},
+    // ── Фаза 5: Фінальні штрихи ─────────────────────
+    {id:5, title:'Фінальні штрихи', emoji:'🌿', parallel:null,
+     tips:[
+       {t:'i', x:'💡 Часник і зелень тільки в кінці — так зберігається аромат'},
+       {t:'p', x:'🏆 Сало з часником розтерте в ступці — традиційна добавка від Клопотенка'},
+     ],
+     sub:[
+       {t:'Наріжте м\'ясо: зніміть з кістки, шматочки ~3×3 см', ph:'🥩', h:'Або розберіть на волокна руками — хто як любить', n:'💡 Не ріжеться — не доварилось. Поварити ще 15–20 хв', tmr:null},
+       {t:'Поверніть м\'ясо в борщ', ph:'🍲', h:'М\'ясо — в борщі, не окремо', n:null, tmr:null},
+       {t:'Додайте розчавлений часник (3 зубчики)', ph:'🧄', h:'Часник завжди останній — так аромат максимальний', n:null, tmr:null},
+       {t:'Додайте дрібно порубану зелень (кріп / петрушку)', ph:'🌿', h:'Зелень не варять — тільки в кінці', n:null, tmr:null},
+       {t:'Доведіть до кипіння і відразу вимкніть вогонь', ph:'🔥', h:'Рівно одне кипіння після часнику — і все', n:null, tmr:null},
+     ]},
+    // ── Фаза 6: Настоювання ─────────────────────────
+    {id:6, title:'Настоюємо і подаємо', emoji:'✨', parallel:null,
+     tips:[
+       {t:'p', x:'🏆 Наступного дня борщ смакує НАБАГАТО краще — всі смаки зливаються'},
+       {t:'i', x:'💡 Зберігайте до 4 днів в холодильнику, заморожується на 2 місяці'},
+     ],
+     sub:[
+       {t:'Щільно накрийте кришкою — настоюється 20–30 хвилин', ph:'⏳', h:'НЕ відкривайте — пар і залишкове тепло розкривають смаки', n:null, tmr:{m:25, l:'Борщ настоюється', bg:false}},
+       {t:'Розлийте по глибоких тарілках', ph:'🍛', h:'Глибокі тарілки — класика подачі', n:null, tmr:null},
+       {t:'Кладіть сметану ложкою зверху — не мішати!', ph:'🥛', h:'Сметана тане сама — це частина подачі', n:'💡 Не додавайте сметану в каструлю — гірчить', tmr:null},
+       {t:'Подавайте з чорним хлібом або пампушками 🎉', ph:'🍽️', h:'Смачного! Ви це зробили!', n:null, tmr:null},
+     ]},
+  ]
+};
+
+// ── Омлет з начинкою ────────────────────────────────────
+const R_OMELETTE = {
+  name:'Омлет з начинкою', emoji:'🍳', baseServings:2,
+  time:25, kcal:420, diff:'🟢 Легко',
+  ingredients:[
+    {n:'Яйця',              u:'шт',   a:4,   h:false, c:'eggs'},
+    {n:'Картопля',          u:'шт',   a:2,   h:false, c:'vegs'},
+    {n:'Помідор',           u:'шт',   a:1,   h:false, c:'vegs'},
+    {n:'Твердий сир',       u:'г',    a:60,  h:false, c:'dairy'},
+    {n:'Хліб (для грінок)', u:'скибки',a:2,  h:false, c:'other'},
+    {n:'Вершкове масло',    u:'ст.л.',a:1,   h:false, c:'dairy'},
+    {n:'Олія соняшникова',  u:'ст.л.',a:2,   h:false, c:'other'},
+    {n:'Сіль, перець',      u:'за смаком',a:null, h:false, c:'other'},
+    {n:'Зелень (кріп/цибуля)', u:'пучок',a:0.25, h:false, c:'vegs'},
+  ],
+  phases:[],
+};
+
+const STEPS_OMELETTE = [
+  // Грінки і картопля — найдовше, запускаємо першими
+  { id:1,  weight:10, deps:[],    timerDep:null,
+    t:'Хліб (2 скибки): наріжте кубиками ~1×1 см',
+    note:{type:'tip', x:'💡 Черствий хліб дає хрусткіші грінки'},
+    timer:null, waitTimer:false },
+
+  { id:2,  weight:20, deps:[1],   timerDep:null,
+    t:'Смажте кубики хліба в 1 ст.л. олії на середньому вогні до золотистої скоринки — відкладіть',
+    note:{type:'tip', x:'💡 Постійно помішуйте — підгорають швидко. Готові грінки відкладіть на паперовий рушник'},
+    timer:{m:4, l:'Грінки смажаться', bg:false}, waitTimer:true },
+
+  { id:3,  weight:30, deps:[],    timerDep:null,
+    t:'Картопля (2 шт): наріжте тонкими кружальцями ~3 мм',
+    note:{type:'tip', x:'💡 Тонко — щоб швидше приготувалась на пательні'},
+    timer:null, waitTimer:false },
+
+  { id:4,  weight:40, deps:[3,2], timerDep:null,
+    t:'Смажте картоплю в 1 ст.л. олії до м\'якості і золотистого кольору',
+    note:{type:'warn', x:'⚠️ Не мішайте перші 2 хв — хай схопиться скоринка'},
+    timer:{m:8, l:'Картопля смажиться', bg:false}, waitTimer:true },
+
+  // Поки смажиться картопля — підготовка
+  { id:5,  weight:50, deps:[3],   timerDep:null,
+    t:'Помідор: наріжте кубиками ~1 см, відкладіть',
+    note:{type:'tip', x:'💡 Щільні помідори — краще. М\'які дадуть забагато соку'},
+    timer:null, waitTimer:false },
+
+  { id:6,  weight:60, deps:[3],   timerDep:null,
+    t:'Сир (60 г): натріть на крупній тертці, відкладіть',
+    note:null, timer:null, waitTimer:false },
+
+  // Яйця — тільки після готової картоплі
+  { id:7,  weight:80, deps:[4],   timerDep:null,
+    t:'Яйця (4 шт): розбийте в миску, посоліть і поперчіть, збийте виделкою',
+    note:{type:'tip', x:'💡 Без молока — яйця чисто. 30 секунд виделкою, не міксер'},
+    timer:null, waitTimer:false },
+
+  { id:8,  weight:90, deps:[7],   timerDep:null,
+    t:'Зменшіть вогонь до середнього. На картоплю додайте вершкове масло (1 ст.л.) і дайте розтанути',
+    note:{type:'tip', x:'💡 Масло дає смак і не дасть омлету прилипнути'},
+    timer:null, waitTimer:false },
+
+  { id:9,  weight:100, deps:[8],  timerDep:null,
+    t:'Залийте яйця рівномірно поверх картоплі. Не мішайте',
+    note:{type:'warn', x:'⚠️ Не мішати! Дайте краям схопитись — потім посунете лопаткою'},
+    timer:{m:2, l:'Омлет схоплюється', bg:false}, waitTimer:true },
+
+  { id:10, weight:110, deps:[9],  timerDep:null,
+    t:'Розкладіть помідори і половину сиру по половині омлету',
+    note:{type:'tip', x:'💡 Тільки на одну половину — зараз будемо складати'},
+    timer:null, waitTimer:false },
+
+  { id:11, weight:120, deps:[10], timerDep:null,
+    t:'Складіть омлет навпіл лопаткою, накрийте кришкою',
+    note:{type:'tip', x:'💡 Обережно — яйця ще м\'які всередині, це нормально'},
+    timer:{m:2, l:'Сир плавиться', bg:false}, waitTimer:true },
+
+  { id:12, weight:130, deps:[11], timerDep:null,
+    t:'Посипте зверху сиром що залишився і грінками',
+    note:null, timer:null, waitTimer:false },
+
+  { id:13, weight:140, deps:[12], timerDep:null,
+    t:'Посипте зеленню, подавайте одразу — омлет не чекає!',
+    note:{type:'pro', x:'🏆 Омлет їдять одразу зі сковорідки — через 2 хв вже не те'},
+    timer:null, waitTimer:false },
+];
+
+let srv=4, checks=[], phase=0, ss=0, stack=['s-home'];
+let cookedN=12;
+let cartItems=[
+  {n:'М\'ясо на кістці',  q:'500 г',   c:'meat', b:false},
+  {n:'Буряк',             q:'2 шт',    c:'vegs', b:false},
+  {n:'Картопля',          q:'4 шт',    c:'vegs', b:false},
+  {n:'Капуста',           q:'300 г',   c:'vegs', b:false},
+  {n:'Морква',            q:'1 шт',    c:'vegs', b:false},
+  {n:'Цибуля',            q:'1 шт',    c:'vegs', b:false},
+  {n:'Часник',            q:'3 зубч.', c:'vegs', b:false},
+  {n:'Томатна паста',     q:'2 ст.л.', c:'other',b:false},
+  {n:'Сметана',           q:'100 г',   c:'dairy',b:false},
+];
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function showScreen(id,dir){
+  const prev=document.querySelector('.screen.active'),next=document.getElementById(id);
+  if(!next||prev===next)return;
+  prev.classList.remove('active');
+  next.classList.add('active');
+  const cls=dir==='back'?'s-back':'s-in';
+  next.classList.add(cls);
+  setTimeout(()=>next.classList.remove(cls),260);
+}
+function push(id){stack.push(id);showScreen(id,'fwd')}
+function navBack(){if(stack.length>1){stack.pop();showScreen(stack[stack.length-1],'back')}}
+function navTo(i){
+  const ids=['s-home','s-home','s-shopping','s-profile'];
+  stack=[ids[i]];showScreen(ids[i],'fwd');
+  if(ids[i]==='s-shopping')renderCart();
+  document.querySelectorAll('.bnav').forEach(n=>n.querySelectorAll('.ni').forEach((ni,j)=>ni.classList.toggle('on',j===i)));
+}
+function goHome(){
+  stopAll();stack=['s-home'];showScreen('s-home','back');
+  document.querySelectorAll('.bnav .ni').forEach((n,i)=>n.classList.toggle('on',i===0));
+}
+
+// ═══════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════
+function fcat(el,cat){
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');
+  document.querySelectorAll('.rcard').forEach(c=>{c.style.display=(cat==='all'||c.dataset.cat===cat)?'':'none';});
+}
+function tbm(el){const on=el.textContent==='❤️';el.textContent=on?'🤍':'❤️';toast(on?'Видалено зі збережених':'Додано ❤️');}
+
+// ═══════════════════════════════════════
+// DETAIL
+// ═══════════════════════════════════════
+function openRecipe(idx){
+  activeRecipeIdx = idx ?? 0;
+  R     = RECIPES[activeRecipeIdx].meta;
+  STEPS = RECIPES[activeRecipeIdx].steps;
+  srv   = R.baseServings;
+  document.getElementById('srv-val').textContent = srv;
+  // оновлюємо заголовок і мета-дані в detail screen
+  const d = document.getElementById('detail-recipe-name');
+  if(d) d.textContent = R.name;
+  const t = document.getElementById('detail-time');
+  if(t) t.textContent = (R.time || 90) + ' хв';
+  const k = document.getElementById('detail-kcal');
+  if(k) k.textContent = (R.kcal || 320);
+  renderIngs();
+  document.querySelectorAll('#ustars .star').forEach(s=>s.classList.remove('lit'));
+  push('s-detail');
+}
+function renderIngs(){
+  const f=srv/R.baseServings;
+  document.getElementById('d-ing').innerHTML=R.ingredients.map(i=>{
+    const s=i.a?Math.round(i.a*f*10)/10:null;
+    return `<div class="ing-row"><div class="ing-dot"></div><div class="ing-name">${i.n}</div><div class="ing-amt">${s?s+' '+i.u:i.u}</div></div>`;
+  }).join('');
+}
+function chgSrv(d){
+  srv=Math.max(1,Math.min(12,srv+d));
+  document.getElementById('srv-val').textContent=srv;renderIngs();
+  toast(`${srv} ${srv===1?'порція':srv<5?'порції':'порцій'}`);
+}
+function setR(n){document.querySelectorAll('#ustars .star').forEach((s,i)=>s.classList.toggle('lit',i<n));toast(`Оцінка ${n} ⭐`);}
+
+// ═══════════════════════════════════════
+// CHECKLIST
+// ═══════════════════════════════════════
+function startChecklist(){
+  checks=R.ingredients.map(()=>false); renderChk();
+  document.getElementById('missnote').style.display='none';
+  switchTab('ing');
+  renderStepsOverview();
+  push('s-checklist');
+}
+
+function switchTab(tab){
+  const isIng = tab === 'ing';
+  document.getElementById('tab-ing').classList.toggle('on', isIng);
+  document.getElementById('tab-steps').classList.toggle('on', !isIng);
+  document.getElementById('tab-panel-ing').style.display   = isIng ? 'flex'  : 'none';
+  document.getElementById('tab-panel-ing').style.flexDirection = 'column';
+  document.getElementById('tab-panel-ing').style.flex      = isIng ? '1'     : '';
+  document.getElementById('tab-panel-ing').style.minHeight = '0';
+  document.getElementById('tab-panel-steps').style.display = isIng ? 'none'  : 'flex';
+  document.getElementById('tab-panel-steps').style.flexDirection = 'column';
+  document.getElementById('tab-panel-steps').style.flex    = isIng ? ''      : '1';
+  document.getElementById('tab-panel-steps').style.minHeight = '0';
+}
+
+function renderStepsOverview(){
+  // Сортуємо кроки за weight для відображення
+  const sorted = [...STEPS].sort((a,b) => a.weight - b.weight);
+  document.getElementById('steps-overview').innerHTML = sorted.map((step, i) => {
+    let timerHTML = '';
+    if(step.timer){
+      const cls = step.timer.bg ? 'bg' : '';
+      const icon = step.timer.bg ? '⚡' : '⏱';
+      timerHTML = `<div class="sov-timer ${cls}">${icon} ${step.timer.m} хв${step.timer.bg ? ' · у фоні' : ''}</div>`;
+    }
+    return `
+      <div class="sov-item">
+        <div class="sov-num">${i+1}</div>
+        <div class="sov-content">
+          <div class="sov-t">${step.t}</div>
+          ${timerHTML}
+        </div>
+      </div>`;
+  }).join('');
+}
+function renderChk(){
+  const f=srv/R.baseServings;
+  document.getElementById('chklist').innerHTML=R.ingredients.map((ing,i)=>{
+    const s=ing.a?Math.round(ing.a*f*10)/10:null;
+    return `<div class="chk-item ${checks[i]?'on':''}" onclick="tchk(${i})">
+      <div class="chk-box">${checks[i]?'✓':''}</div>
+      <div class="chk-name" style="${checks[i]?'text-decoration:line-through;color:var(--t3)':''}">${ing.n}</div>
+      <div class="chk-qty">${s?s+' '+ing.u:ing.u}</div>
+    </div>`;
+  }).join('');
+  const done=checks.filter(Boolean).length,tot=checks.length;
+  document.getElementById('pfill').style.width=`${Math.round(done/tot*100)}%`;
+  document.getElementById('ptxt').textContent=`${done} з ${tot} є вдома`;
+}
+function tchk(i){checks[i]=!checks[i];renderChk();}
+function addMiss(){
+  const f=srv/R.baseServings;
+  const miss=R.ingredients.filter((_,i)=>!checks[i]);
+  if(!miss.length){toast('Всі є! 🎉');return}
+  miss.forEach(ing=>{
+    const s=ing.a?Math.round(ing.a*f*10)/10:null;
+    const q=s?`${s} ${ing.u}`:ing.u;
+    if(!cartItems.find(c=>c.n===ing.n))cartItems.push({n:ing.n,q,c:ing.c||'other',b:false});
+  });
+  document.getElementById('missnote').style.display='block';
+  toast(`${miss.length} позицій додано до покупок 🛒`);
+}
+
+// ═══════════════════════════════════════
+// COOKING — граф кроків з залежностями
+// ═══════════════════════════════════════
+// deps     — масив id кроків що мають бути done=true
+// timerDep — id кроку чий bg-таймер має завершитись (readyAt)
+// waitTimer— кнопка "Готово" блокується до кінця таймера
+
+const STEPS_BORSCHT = [
+  // ─── М'ясо на прогрів ────────────────────────────────────
+  { id:1,  weight:10,  deps:[],        timerDep:null,
+    t:'Дістаньте м\'ясо з холодильника, покладіть на тарілку',
+    note:{type:'tip', x:'💡 Поки м\'ясо гріється 20 хв — наріжте всі овочі'},
+    timer:{m:20, l:'М\'ясо прогрівається', bg:true}, waitTimer:false },
+
+  // ─── Нарізка (одразу після 1, незалежно від бульйону) ────
+  { id:7,  weight:70,  deps:[1],       timerDep:null,
+    t:'Картопля (4 шт): наріжте кубиками ~2×2 см — одразу в миску з холодною водою',
+    note:{type:'warn', x:'⚠️ Без холодної води почорніє за 10 хвилин. Залишається в мисці до кроку "додати в борщ"'},
+    timer:null, waitTimer:false },
+
+  { id:9,  weight:90,  deps:[1],       timerDep:null,
+    t:'Буряк (2 шт): натріть на крупній тертці — відкладіть в миску',
+    note:{type:'warn', x:'⚠️ Буряк фарбує — рукавички або намастіть руки олією. Піде в засмажку'},
+    timer:null, waitTimer:false },
+
+  { id:10, weight:100, deps:[1],       timerDep:null,
+    t:'Морква (1 шт): натріть на крупній тертці — відкладіть в миску',
+    note:{type:'tip', x:'💡 Піде в засмажку разом з цибулею'},
+    timer:null, waitTimer:false },
+
+  { id:11, weight:110, deps:[1],       timerDep:null,
+    t:'Цибуля (1 шт): дрібні кубики ~5 мм — відкладіть в миску',
+    note:{type:'tip', x:'💡 Піде в засмажку. Нарізана цибуля може полежати 15–20 хв'},
+    timer:null, waitTimer:false },
+
+  { id:12, weight:120, deps:[1],       timerDep:null,
+    t:'Капуста (300 г): тонко нашинкуйте ~3 мм — відкладіть в миску',
+    note:{type:'tip', x:'💡 Піде в борщ першою — після того як дістанете м\'ясо'},
+    timer:null, waitTimer:false },
+
+  { id:13, weight:130, deps:[1],       timerDep:null,
+    t:'Часник (3 зубчики): розчавіть лезом ножа — відкладіть окремо',
+    note:{type:'tip', x:'💡 Піде в самому кінці. Не змішуйте з іншими овочами'},
+    timer:null, waitTimer:false },
+
+  // ─── Засмажка (після нарізки цибулі + моркви + буряка) ───
+  { id:14, weight:140, deps:[9,10,11], timerDep:null,
+    t:'Розігрійте сковорідку на середньому вогні, налийте 3 ст.л. олії. Додайте цибулю і моркву',
+    note:{type:'warn', x:'⚠️ Тільки золотиста цибуля! Коричнева — гірчить'},
+    timer:{m:5, l:'Цибуля і морква смажаться', bg:false}, waitTimer:true },
+
+  { id:16, weight:160, deps:[14],      timerDep:null,
+    t:'Додайте буряк + 1 ч.л. лимонної кислоти (або оцту) + 1 ч.л. цукру, перемішайте',
+    note:{type:'warn', x:'⚠️ Лимонна кислота або оцет обов\'язково — без них борщ стане коричневим'},
+    timer:null, waitTimer:false },
+
+  { id:18, weight:180, deps:[16],      timerDep:null,
+    t:'Додайте 2 ст.л. томатної пасти, тушкуйте помішуючи',
+    note:{type:'tip', x:'💡 Паста має потемніти і загуснути — це карамелізація'},
+    timer:{m:6, l:'Засмажка тушкується', bg:false}, waitTimer:true },
+
+  { id:19, weight:190, deps:[18],      timerDep:null,
+    t:'Зніміть засмажку з вогню — готова. Відставте в сторону',
+    note:{type:'tip', x:'💡 Засмажка чекатиме поки не буде готовий бульйон'},
+    timer:null, waitTimer:false },
+
+  // ─── Вода в каструлю (одразу після 1) ────────────────────
+  { id:3,  weight:30,  deps:[1],       timerDep:null,
+    t:'Залийте 3 л холодної води в каструлю 5–6 л',
+    note:{type:'tip', x:'💡 Холодна вода обов\'язково — гаряча дає каламутний бульйон'},
+    timer:null, waitTimer:false },
+
+  // ─── Промити м'ясо (тільки після 20хв таймера) ───────────
+  { id:2,  weight:200, deps:[1],       timerDep:1,
+    t:'М\'ясо прогрілось — промийте під холодною водою, покладіть ЦІЛИМ шматком у каструлю',
+    note:{type:'warn', x:'⚠️ Нарізане м\'ясо зробить бульйон каламутним'},
+    timer:null, waitTimer:false },
+
+  // ─── Бульйон ─────────────────────────────────────────────
+  { id:5,  weight:220, deps:[2,3],     timerDep:null,
+    t:'Поставте на середній вогонь, доведіть до кипіння — знімайте сіру піну шумівкою',
+    note:{type:'warn', x:'⚠️ Не відходьте — піна з\'являється швидко. Не накривайте кришкою'},
+    timer:{m:10, l:'Вода закипає', bg:false}, waitTimer:true },
+
+  { id:6,  weight:230, deps:[5],       timerDep:null,
+    t:'Додайте лавровий лист (2 шт) + перець горошком (5 шт). Зменшіть вогонь до мінімуму, накрийте кришкою',
+    note:{type:'tip', x:'💡 Запустіть таймер 90 хв і займайтеся засмажкою якщо ще не зробили'},
+    timer:{m:90, l:'Бульйон вариться', bg:true}, waitTimer:false },
+
+  // ─── Збираємо борщ (після бульйону + засмажки + нарізки) ─
+  { id:20, weight:300, deps:[6,12,19], timerDep:6,
+    t:'Бульйон готовий — дістаньте м\'ясо шумівкою на дошку. Викиньте лавровий лист',
+    note:{type:'tip', x:'💡 М\'ясо хай трохи охолоне — поки закидайте капусту'},
+    timer:null, waitTimer:false },
+
+  { id:21, weight:310, deps:[20],      timerDep:null,
+    t:'Додайте нашатковану капусту в киплячий бульйон',
+    note:{type:'warn', x:'⚠️ Капуста першою — їй треба більше часу ніж картоплі'},
+    timer:{m:5, l:'Капуста вариться', bg:false}, waitTimer:true },
+
+  { id:22, weight:320, deps:[21],      timerDep:null,
+    t:'Злийте воду з миски, додайте картоплю в бульйон',
+    note:{type:'tip', x:'💡 Картопля йде після капусти'},
+    timer:{m:10, l:'Картопля вариться', bg:false}, waitTimer:false },
+
+  { id:23, weight:330, deps:[22],      timerDep:null,
+    t:'Поки вариться — наріжте м\'ясо: зніміть з кістки, шматочки ~3×3 см',
+    note:{type:'tip', x:'💡 Або розберіть руками на волокна. М\'ясо поки відкладіть — піде в кінці'},
+    timer:null, waitTimer:false },
+
+  { id:24, weight:340, deps:[23,22],   timerDep:null,
+    t:'Картопля напівготова — додайте всю засмажку, перемішайте. Посоліть 1.5 ч.л., поперчіть, спробуйте',
+    note:{type:'tip', x:'💡 Борщ одразу стане яскраво-червоним. Трохи пересолено — норма, при настоюванні м\'якшає'},
+    timer:null, waitTimer:false },
+
+  { id:26, weight:360, deps:[24],      timerDep:null,
+    t:'Поверніть нарізане м\'ясо в борщ. Варіть 10 хвилин',
+    note:null, timer:{m:10, l:'Борщ доварюється', bg:false}, waitTimer:true },
+
+  { id:27, weight:370, deps:[26,13],   timerDep:null,
+    t:'Додайте розчавлений часник + зелень (кріп/петрушку). Доведіть до кипіння і одразу вимкніть',
+    note:{type:'tip', x:'💡 Часник і зелень — тільки наприкінці. Не кип\'ятіть — втратять аромат'},
+    timer:null, waitTimer:false },
+
+  { id:28, weight:380, deps:[27],      timerDep:null,
+    t:'Накрийте кришкою — настоюється 25 хвилин. Не відкривайте',
+    note:{type:'pro', x:'🏆 Наступного дня смакує НАБАГАТО краще — всі смаки зливаються'},
+    timer:{m:25, l:'Борщ настоюється', bg:false}, waitTimer:true },
+
+  { id:29, weight:390, deps:[28],      timerDep:null,
+    t:'Розлийте по тарілках. Сметана ложкою зверху — не мішати! Подавайте з хлібом або пампушками',
+    note:{type:'tip', x:'💡 Сметана тане сама — не додавати в каструлю'},
+    timer:null, waitTimer:false },
+];
+// ─── RECIPES REGISTRY ────────────────────────────────────
+const RECIPES = [
+  { meta: R_BORSCHT,   steps: STEPS_BORSCHT   },
+  { meta: R_OMELETTE,  steps: STEPS_OMELETTE  },
+];
+
+let activeRecipeIdx = 0;
+let R     = RECIPES[0].meta;
+let STEPS = RECIPES[0].steps;
+
+// ─── СТАН ────────────────────────────────────────────────
+// ST: Map<id, { done, readyAt, timerObj }>
+// readyAt — Date.now() мс коли крок стає доступним (для timerDep)
+let ST = new Map();
+let curStepId = null;
+
+function initST(){
+  ST.clear();
+  STEPS.forEach(s => ST.set(s.id, { done:false, readyAt:null, timerObj:null }));
+}
+
+// ─── ВИБІР НАСТУПНОГО КРОКУ ──────────────────────────────
+function pickNextStep(){
+  const now = Date.now();
+  const available = STEPS.filter(s => {
+    const st = ST.get(s.id);
+    if(st.done) return false;
+    if(!s.deps.every(d => ST.get(d)?.done)) return false;
+    if(s.timerDep){
+      const ra = ST.get(s.timerDep)?.readyAt;
+      if(!ra || ra > now) return false;
+    }
+    return true;
+  });
+  if(!available.length) return null;
+  available.sort((a,b) => a.weight - b.weight);
+  return available[0];
+}
+
+// ─── СТАРТ ───────────────────────────────────────────────
+function startCooking(){
+  initST();
+  stopAll();
+  curStepId = null;
+  const next = pickNextStep();
+  if(next){ curStepId = next.id; showStep(); }
+  push('s-cook');
+}
+
+// ─── РЕНДЕР КАРТКИ ───────────────────────────────────────
+function showStep(){
+  const step = STEPS.find(s => s.id === curStepId);
+  if(!step){ showDone(); return; }
+  const st  = ST.get(step.id);
+  const total = STEPS.length;
+  const doneCount = [...ST.values()].filter(v=>v.done).length;
+
+  document.getElementById('cook-prog-fill').style.width = `${Math.round(doneCount/total*100)}%`;
+  document.getElementById('cook-prog-txt').textContent  = `${doneCount+1} / ${total}`;
+
+  const tmr = st.timerObj;
+  const hasT = !!step.timer;
+  const run  = tmr?.run  || false;
+  const fin  = tmr?.done || false;
+  const totalSecs = hasT ? minsToSecs(step.timer.m) : 0;
+  const secs = tmr ? tmr.s : totalSecs;
+  const pct  = totalSecs > 0 ? Math.max(0, Math.round(secs/totalSecs*100)) : 0;
+
+  let noteHTML = '';
+  if(step.note){
+    const cls = step.note.type==='warn'?'warn':step.note.type==='pro'?'pro':'tip';
+    noteHTML = `<div class="step-note ${cls}">${step.note.x}</div>`;
+  }
+
+  let timerHTML = '';
+  if(hasT){
+    const dv  = fmtDisplay(secs, totalSecs);
+    const dc  = fin?'fin':(secs<=totalSecs*0.15&&run?'urg':'');
+    const tc  = fin?'done':(run?'run':'');
+    const isBg = step.timer.bg;
+    timerHTML = `
+      <div class="step-timer ${tc}" id="tmr-box">
+        <div class="step-timer-header">
+          <div>
+            <div class="step-timer-label">${step.timer.l}</div>
+            ${isBg ? '<div class="step-timer-bg-note">⚡ Продовжується у фоні після "Далі"</div>' : ''}
+          </div>
+          <div class="step-timer-dig ${dc}" id="tmr-dig">${dv}</div>
+        </div>
+        <div class="step-timer-track"><div class="step-timer-fill" id="tmr-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  }
+
+  document.getElementById('step-card').innerHTML = `
+    <div class="step-num">Крок ${doneCount+1} з ${total}</div>
+    <div class="step-title">${step.t}</div>
+    ${noteHTML}
+    ${timerHTML}
+  `;
+  _updateDoneBtn();
+  renderFbars('cook-fbars');
+}
+
+function _updateDoneBtn(){
+  const step = STEPS.find(s=>s.id===curStepId);
+  const btn  = document.getElementById('cook-btn');
+  if(!btn) return;
+
+  const remaining = STEPS.filter(s=>!ST.get(s.id).done).length;
+  const isLast    = remaining <= 1;
+  const nextLabel = isLast ? '🎉 Готово!' : 'Далі →';
+
+  if(!step){
+    btn.textContent = nextLabel; btn.style.cssText = ''; btn.onclick = stepDone; return;
+  }
+
+  const st  = ST.get(step.id);
+  const tmr = st.timerObj;
+  const run = tmr?.run  || false;
+  const fin = tmr?.done || false;
+
+  // Без таймера — просто Далі
+  if(!step.timer){
+    btn.textContent = nextLabel; btn.style.cssText = ''; btn.onclick = stepDone; return;
+  }
+
+  // Фоновий таймер — завжди Далі, при кліку запускає і переходить
+  if(step.timer.bg){
+    btn.textContent = nextLabel; btn.style.cssText = ''; btn.onclick = stepDone; return;
+  }
+
+  // Блокуючий таймер
+  if(fin){
+    // завершено → Далі
+    btn.textContent = nextLabel; btn.style.cssText = ''; btn.onclick = stepDone;
+  } else if(!tmr || !run){
+    // не запущений або на паузі → Далі (запустить таймер, не перейде)
+    const label = !tmr ? nextLabel : '▶ Продовжити';
+    btn.textContent = label; btn.style.cssText = ''; btn.onclick = stepDone;
+  } else {
+    // іде → Пауза
+    btn.textContent = '⏸ Пауза';
+    btn.style.cssText = 'background:rgba(212,96,96,.12);color:var(--rd);border:1.5px solid var(--rd);box-shadow:none;';
+    btn.onclick = () => { tglStepTmr(); };
+  }
+}
+
+function stepDone(){
+  const step = STEPS.find(s=>s.id===curStepId);
+  if(!step) return;
+  const st = ST.get(step.id);
+  const tmr = st.timerObj;
+  const fin = tmr?.done || false;
+
+  // Блокуючий таймер ще не завершений — запустити або відновити
+  if(step.timer && !step.timer.bg && !fin){
+    tglStepTmr(); // start або resume
+    return;
+  }
+
+  // Bg таймер — запускаємо і переходимо
+  if(step.timer?.bg && !tmr) _launchTimer(step);
+
+  st.done = true;
+
+  // readyAt для кроків що залежать від цього таймера
+  if(step.timer?.bg && st.timerObj && !st.timerObj.done){
+    st.readyAt = Date.now() + st.timerObj.s * 1000;
+  } else {
+    st.readyAt = Date.now() - 1;
+  }
+
+  const next = pickNextStep();
+  if(!next){
+    const remaining = STEPS.filter(s => !ST.get(s.id).done);
+    if(remaining.length === 0){ stopAll(); showDone(); return; }
+    showWaitingCard(); return;
+  }
+  curStepId = next.id;
+  showStep();
+}
+
+// ─── ЕКРАН ОЧІКУВАННЯ ────────────────────────────────────
+function showWaitingCard(){
+  const total = STEPS.length;
+  const doneCount = [...ST.values()].filter(v=>v.done).length;
+
+  document.getElementById('cook-prog-fill').style.width = `${Math.round(doneCount/total*100)}%`;
+  document.getElementById('cook-prog-txt').textContent  = `${doneCount} / ${total}`;
+
+  // активні bg-таймери
+  const active = [];
+  ST.forEach((st, sid) => {
+    const t = st.timerObj;
+    if(t && t.bg && !t.done && t.s > 0) active.push({sid, t});
+  });
+
+  const timersHTML = active.map(({t}) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:14px;
+      background:linear-gradient(135deg,rgba(232,180,76,.1),rgba(212,121,58,.06));
+      border:1.5px solid rgba(232,180,76,.3);border-radius:14px;margin-bottom:10px">
+      <div style="flex:1">
+        <div style="font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.9px;margin-bottom:4px">${t.label}</div>
+        <div style="font-size:13px;color:var(--t2)">Наступний крок з\'явиться автоматично</div>
+      </div>
+      <div style="font-family:'Playfair Display',serif;font-size:38px;font-weight:700;
+        color:var(--ac);font-variant-numeric:tabular-nums" id="wait-t-${t.label.replace(/\W/g,'_')}">${fmtDisplay(t.s, t.total)}</div>
+    </div>`).join('');
+
+  document.getElementById('step-card').innerHTML = `
+    <div class="step-num">Зачекайте...</div>
+    <div class="step-title">Наступний крок буде доступний після таймера</div>
+    <div style="margin-top:16px">${timersHTML}</div>
+    <div class="step-note tip" style="margin-top:8px">💡 Можна відійти — таймер у фоні. Повернетесь — крок з\'явиться сам</div>
+  `;
+
+  // кнопка неактивна
+  const btn = document.getElementById('cook-btn');
+  if(btn){ btn.textContent = 'Очікування...'; btn.style.cssText = 'background:var(--s2);color:var(--t3);box-shadow:none;pointer-events:none;'; }
+
+  // запускаємо polling — перевіряємо кожну секунду чи з\'явився наступний крок
+  _waitPoll();
+}
+
+function _waitPoll(){
+  // master tick вже оновлює таймери і readyAt
+  // просто перевіряємо раз на секунду
+  const poll = setInterval(()=>{
+    // оновлюємо відображення таймерів на екрані очікування
+    ST.forEach((st) => {
+      const t = st.timerObj;
+      if(!t || !t.bg || t.done) return;
+      const el = document.getElementById(`wait-t-${t.label.replace(/\W/g,'_')}`);
+      if(el) el.textContent = fmtDisplay(t.s, t.total);
+    });
+
+    const next = pickNextStep();
+    if(next){
+      clearInterval(poll);
+      curStepId = next.id;
+      showStep();
+    }
+    // якщо всі виконані
+    const remaining = STEPS.filter(s => !ST.get(s.id).done);
+    if(remaining.length === 0){ clearInterval(poll); stopAll(); showDone(); }
+  }, 1000);
+}
+
+// ─── ТАЙМЕР ──────────────────────────────────────────────
+function _launchTimer(step){
+  const st = ST.get(step.id);
+  if(st.timerObj?.run) return;
+  const s = st.timerObj?.s ?? minsToSecs(step.timer.m);
+  st.timerObj = { s, total:minsToSecs(step.timer.m), label:step.timer.l, bg:step.timer.bg||false, run:true, done:false };
+  _startMasterTick();
+  _refreshTimerBtn();
+  renderFbars('cook-fbars');
+}
+
+function tglStepTmr(){
+  const step = STEPS.find(s=>s.id===curStepId);
+  if(!step?.timer) return;
+  const st = ST.get(step.id);
+  if(!st.timerObj){ _launchTimer(step); _updateDoneBtn(); return; }
+  const t = st.timerObj;
+  if(t.done) return;
+  if(t.run){
+    t.run = false;
+    let any=false; ST.forEach(s=>{ if(s.timerObj?.run) any=true; });
+    if(!any) _stopMasterTick();
+  } else { t.run=true; _startMasterTick(); }
+  _updateDoneBtn();
+}
+
+function rstStepTmr(){
+  const step = STEPS.find(s=>s.id===curStepId);
+  if(!step?.timer) return;
+  const st = ST.get(step.id);
+  if(st.timerObj){ st.timerObj.run=false; st.timerObj.s=minsToSecs(step.timer.m); st.timerObj.done=false; }
+  const d=document.getElementById('tmr-dig'),f=document.getElementById('tmr-fill'),box=document.getElementById('tmr-box');
+  if(d){ d.textContent=fmtDisplay(minsToSecs(step.timer.m),minsToSecs(step.timer.m)); d.classList.remove('urg','fin'); }
+  if(f) f.style.width='100%';
+  if(box){ box.classList.remove('run','done'); }
+  let any=false; ST.forEach(s=>{ if(s.timerObj?.run) any=true; });
+  if(!any) _stopMasterTick();
+  _updateDoneBtn();
+}
+
+function _launchTimer(step){
+  const st = ST.get(step.id);
+  if(st.timerObj?.run) return;
+  const s = st.timerObj?.s ?? minsToSecs(step.timer.m);
+  st.timerObj = { s, total:minsToSecs(step.timer.m), label:step.timer.l, bg:step.timer.bg||false, run:true, done:false };
+  _startMasterTick();
+  document.getElementById('tmr-box')?.classList.add('run');
+  _updateDoneBtn();
+  renderFbars('cook-fbars');
+}
+
+function _refreshTimerBtn(){
+  // стан відображається через _updateDoneBtn і _updateInline
+  const t = curStepId ? ST.get(curStepId)?.timerObj : null;
+  const box = document.getElementById('tmr-box');
+  if(box){
+    box.classList.toggle('run',  !!t?.run  && !t?.done);
+    box.classList.toggle('done', !!t?.done);
+  }
+  _updateDoneBtn();
+}
+
+function exitCooking(){
+  hideDlg(); stopAll();
+  stack = stack.filter(s => s !== 's-cook');
+  if(!stack.length) stack = ['s-home'];
+  showScreen(stack[stack.length-1], 'back');
+}
+
+// ═══════════════════════════════════════
+// DEMO SPEED — прискорення таймерів для демо
+// 6 = 1 хвилина рецепту = 6 секунд реального часу (10x)
+// 60 = реальний час (вимкнути прискорення)
+const DEMO_SPEED = 6;
+function minsToSecs(m){ return m * DEMO_SPEED; }
+// Відображає реальний час рецепту (не прискорений)
+function fmtDisplay(timerSecs, totalTimerSecs){
+  if(DEMO_SPEED === 60) return fmt(timerSecs); // реальний час
+  const realSecs = Math.round(timerSecs / DEMO_SPEED * 60);
+  return fmt(realSecs);
+}
+
+// Структура timer: { s, total, label, bg, run, done }
+// Один setInterval на весь додаток — tick кожну секунду
+
+let _masterTick = null;
+
+function _startMasterTick(){
+  if(_masterTick) return;
+  _masterTick = setInterval(()=>{
+    let anyActive = false;
+    ST.forEach((st, stepId) => {
+      const t = st.timerObj;
+      if(!t || !t.run || t.done) return;
+      anyActive = true;
+      t.s--;
+      if(t.s <= 0){
+        t.s = 0; t.run = false; t.done = true;
+        // якщо це bg-таймер — оновлюємо readyAt кроку
+        if(t.bg) st.readyAt = Date.now() - 1;
+        toast(`⏱ ${t.label} — час вийшов!`);
+        // якщо це таймер поточного кроку — оновлюємо UI
+        if(stepId === curStepId){
+          _refreshTimerBtn();
+          _updateDoneBtn();
+        }
+        renderFbars('cook-fbars');
+      }
+    });
+    _updateInline();
+    _updateFbars();
+    if(!anyActive){ clearInterval(_masterTick); _masterTick=null; }
+  }, 1000);
+}
+
+function _stopMasterTick(){
+  clearInterval(_masterTick); _masterTick=null;
+}
+
+// Оновлення inline таймера поточного кроку
+function _updateInline(){
+  const st = curStepId ? ST.get(curStepId) : null;
+  const t  = st?.timerObj;
+  if(!t) return;
+  const d = document.getElementById('tmr-dig');
+  const f = document.getElementById('tmr-fill');
+  if(d){
+    d.textContent = fmtDisplay(t.s, t.total);
+    d.classList.toggle('urg', t.s <= t.total*0.15 && t.run && !t.done);
+    d.classList.toggle('fin', t.done);
+  }
+  if(f) f.style.width = `${Math.max(0,(t.s/t.total)*100)}%`;
+}
+
+let _fbarCache = { 'cook-fbars': null };
+function _updateFbars(){ _syncFbar('cook-fbars'); }
+
+function _syncFbar(cid){
+  const container = document.getElementById(cid);
+  if(!container) return;
+  // збираємо bg таймери що активно йдуть (крім поточного кроку якщо він не bg)
+  const visible = [];
+  ST.forEach((st, stepId) => {
+    const t = st.timerObj;
+    if(!t || t.done || t.s <= 0 || !t.bg) return;
+    if(stepId === curStepId && !st.done) return; // поточний вже показується inline
+    visible.push({stepId, t});
+  });
+  visible.sort((a,b) => a.stepId - b.stepId);
+
+  const cache = _fbarCache[cid];
+  if(!cache || visible.length !== cache.length){
+    _fbarCache[cid] = visible.map(v=>v.stepId);
+    container.innerHTML = visible.slice(0,2).map(({t})=>`
+      <div class="fbar show${t.s<=minsToSecs(1)?' urg':''}">
+        <div class="fdot"></div>
+        <div class="fnm">${t.label}</div>
+        <div class="ftime fbar-time">${fmtDisplay(t.s, t.total)}</div>
+        <div class="farr">→</div>
+      </div>`).join('');
+    return;
+  }
+  const rows = container.querySelectorAll('.fbar');
+  visible.slice(0,2).forEach(({t}, i) => {
+    const row = rows[i];
+    if(!row) return;
+    row.classList.toggle('urg', t.s <= minsToSecs(1));
+    const timeEl = row.querySelector('.fbar-time');
+    if(timeEl) timeEl.textContent = fmtDisplay(t.s, t.total);
+  });
+}
+
+function renderFbars(cid){
+  _fbarCache[cid] = null;
+  _syncFbar(cid);
+}
+
+function stopAll(){
+  _stopMasterTick();
+  ST.forEach(st => { if(st.timerObj){ st.timerObj.run=false; } });
+  _fbarCache = {'cook-fbars': null};
+}
+
+function fmt(s){
+  if(s<0)s=0;
+  return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════
+// DONE / CONFETTI
+// ═══════════════════════════════════════
+function showDone(){
+  cookedN++;
+  document.getElementById('p-cooked').textContent=cookedN;
+  document.getElementById('pbadge').textContent=cookedN;
+  document.getElementById('done-srv').textContent=srv;
+  push('s-done');confetti();
+}
+function confetti(){
+  const c=document.getElementById('confetti');c.innerHTML='';
+  const cols=['#e8b44c','#d4793a','#6aaf6a','#f0ead8','#d46060'];
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div');p.className='cp';
+    p.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.7}s`;
+    c.appendChild(p);
+  }
+  setTimeout(()=>c.innerHTML='',4000);
+}
+
+// ═══════════════════════════════════════
+// EXIT / RATE
+// ═══════════════════════════════════════
+function showExitDlg(){document.getElementById('exit-dlg').classList.add('show')}
+function hideDlg(){document.getElementById('exit-dlg').classList.remove('show')}
+function openRate(){document.getElementById('rate-sheet').classList.add('show')}
+function closeRate(e){if(e.target===document.getElementById('rate-sheet'))document.getElementById('rate-sheet').classList.remove('show')}
+function setMR(n){document.querySelectorAll('#mstars .mstar').forEach((s,i)=>s.classList.toggle('lit',i<n))}
+function submitRate(){document.getElementById('rate-sheet').classList.remove('show');toast('Дякуємо! ⭐');setTimeout(goHome,800)}
+
+// ═══════════════════════════════════════
+// CART
+// ═══════════════════════════════════════
+function renderCart(){
+  const g={vegs:'🥬 Овочі',meat:'🥩 М\'ясо',dairy:'🧀 Молочне',other:'🫙 Інше'};
+  const b=document.getElementById('spbody');let h='';
+  for(const[k,l]of Object.entries(g)){
+    const items=cartItems.filter(i=>i.c===k);if(!items.length)continue;
+    h+=`<div class="shop-group"><div class="shop-group-label">${l}</div><div class="shop-items">`;
+    items.forEach(item=>{
+      const i=cartItems.indexOf(item);
+      h+=`<div class="shop-item ${item.b?'bought':''}" onclick="tCart(${i})">
+        <div class="shop-chk">${item.b?'✓':''}</div>
+        <div class="shop-nm">${item.n}</div><div class="shop-qt">${item.q}</div>
+      </div>`;
+    });
+    h+='</div></div>';
+  }
+  b.innerHTML=h||'<div style="padding:40px 20px;text-align:center;color:var(--t3)">Список порожній 🛒</div>';
+  document.getElementById('spbadge').textContent=`🛒 ${cartItems.filter(i=>!i.b).length} позицій`;
+}
+function tCart(i){cartItems[i].b=!cartItems[i].b;renderCart();}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+let tT;
+function toast(msg){
+  const el=document.getElementById('toast-el');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('show'),2700);
+}
+// init
+renderCart();
+</script>
+</body>
+</html>

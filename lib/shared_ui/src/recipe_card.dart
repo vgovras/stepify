@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../app/text_styles.dart';
 import '../../core/core.dart';
 
 /// Recipe card for the home catalog.
@@ -127,15 +129,7 @@ class RecipeCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    recipe.name,
-                    style: const TextStyle(
-                      fontFamily: 'Playfair Display',
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      height: 1.3,
-                    ),
-                  ),
+                  Text(recipe.name, style: AppTextStyles.cardTitle),
                   const SizedBox(height: 8),
                   Row(
                     children: [

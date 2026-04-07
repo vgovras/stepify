@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../app/text_styles.dart';
 import '../../core/core.dart';
 
 /// Inline timer block displayed within a step card.
@@ -78,12 +80,7 @@ class TimerDisplay extends StatelessWidget {
               ),
               Text(
                 formatTimer(timerState.secondsRemaining),
-                style: TextStyle(
-                  fontFamily: 'Playfair Display',
-                  fontSize: AppSizes.fontTimer,
-                  fontWeight: FontWeight.w700,
-                  color: digitColor,
-                ),
+                style: AppTextStyles.timer.copyWith(color: digitColor),
               ),
             ],
           ),

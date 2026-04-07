@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../app/text_styles.dart';
 import '../../core/core.dart';
 
 /// Background timer indicator bar at the top of the cook screen.
@@ -49,12 +51,7 @@ class FloatBar extends StatelessWidget {
           ),
           Text(
             formatTimer(secondsRemaining),
-            style: TextStyle(
-              fontFamily: 'Playfair Display',
-              fontSize: AppSizes.fontFloatBarTimer,
-              fontWeight: FontWeight.w700,
-              color: timeColor,
-            ),
+            style: AppTextStyles.floatBarTimer.copyWith(color: timeColor),
           ),
           const SizedBox(width: 6),
           const Text('→', style: TextStyle(fontSize: 11, color: AppColors.t3)),

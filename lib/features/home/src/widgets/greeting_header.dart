@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/text_styles.dart';
 import '../../../../core/core.dart';
 
 /// Greeting block with personalized hello and heading.
@@ -10,10 +12,10 @@ class GreetingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Привіт, Славе 👋',
           style: TextStyle(
             fontSize: 14,
@@ -21,26 +23,20 @@ class GreetingHeader extends StatelessWidget {
             color: AppColors.t2,
           ),
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         Text.rich(
           TextSpan(
             children: [
               TextSpan(
                 text: 'Що будемо\n',
-                style: TextStyle(
-                  fontFamily: 'Playfair Display',
-                  fontSize: AppSizes.fontScreenTitle,
-                  fontWeight: FontWeight.w700,
+                style: AppTextStyles.screenTitle.copyWith(
                   height: 1.25,
                   color: AppColors.tx,
                 ),
               ),
               TextSpan(
                 text: 'готувати?',
-                style: TextStyle(
-                  fontFamily: 'Playfair Display',
-                  fontSize: AppSizes.fontScreenTitle,
-                  fontWeight: FontWeight.w700,
+                style: AppTextStyles.screenTitle.copyWith(
                   height: 1.25,
                   color: AppColors.ac,
                 ),

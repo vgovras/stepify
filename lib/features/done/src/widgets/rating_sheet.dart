@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../app/text_styles.dart';
 import '../../../../core/core.dart';
 import '../../../../shared_ui/shared_ui.dart';
 import '../done_cubit.dart';
@@ -44,14 +46,9 @@ class _RatingSheetState extends State<RatingSheet> {
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'Оцініть рецепт',
-            style: TextStyle(
-              fontFamily: 'Playfair Display',
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: AppColors.tx,
-            ),
+            style: AppTextStyles.heading20.copyWith(color: AppColors.tx),
           ),
           const SizedBox(height: 16),
           // Star row

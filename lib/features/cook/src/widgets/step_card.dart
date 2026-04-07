@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/text_styles.dart';
 import '../../../../core/core.dart';
 import '../../../../shared_ui/shared_ui.dart';
 
@@ -34,15 +36,7 @@ class StepCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            step.text,
-            style: const TextStyle(
-              fontFamily: 'Playfair Display',
-              fontSize: AppSizes.fontStepTitle,
-              fontWeight: FontWeight.w700,
-              height: 1.3,
-            ),
-          ),
+          Text(step.text, style: AppTextStyles.stepTitle),
           if (step.note != null) ...[
             const SizedBox(height: 14),
             NoteBlock(note: step.note!),

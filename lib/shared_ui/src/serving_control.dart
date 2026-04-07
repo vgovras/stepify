@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/text_styles.dart';
 import '../../core/core.dart';
 
 /// +/- stepper for serving count.
@@ -45,10 +46,7 @@ class ServingControl extends StatelessWidget {
                 child: Text(
                   '$servings',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: 'Playfair Display',
-                    fontSize: AppSizes.fontServingValue,
-                    fontWeight: FontWeight.w700,
+                  style: AppTextStyles.servingValue.copyWith(
                     color: AppColors.ac,
                   ),
                 ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../app/text_styles.dart';
 import '../../../core/core.dart';
 import '../../../shared_ui/shared_ui.dart';
 import 'detail_cubit.dart';
@@ -91,12 +93,7 @@ class _RecipeHeader extends StatelessWidget {
       children: [
         Text(
           recipe.name,
-          style: const TextStyle(
-            fontFamily: 'Playfair Display',
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: AppColors.tx,
-          ),
+          style: AppTextStyles.heading24.copyWith(color: AppColors.tx),
         ),
         const SizedBox(height: 8),
         Text(
@@ -140,14 +137,9 @@ class _IngredientsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Інгредієнти',
-          style: TextStyle(
-            fontFamily: 'Playfair Display',
-            fontSize: AppSizes.fontSectionTitle,
-            fontWeight: FontWeight.w700,
-            color: AppColors.tx,
-          ),
+          style: AppTextStyles.sectionTitle.copyWith(color: AppColors.tx),
         ),
         const SizedBox(height: 12),
         ...ingredients.map(
@@ -338,8 +330,15 @@ class _ReviewCard extends StatelessWidget {
   }
 }
 
-class _RatingSection extends StatelessWidget {
+class _RatingSection extends StatefulWidget {
   const _RatingSection();
+
+  @override
+  State<_RatingSection> createState() => _RatingSectionState();
+}
+
+class _RatingSectionState extends State<_RatingSection> {
+  int _rating = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -358,11 +357,14 @@ class _RatingSection extends StatelessWidget {
         Row(
           children: List.generate(
             5,
-            (index) => Text(
-              '★',
-              style: TextStyle(
-                fontSize: 22,
-                color: index < 4 ? AppColors.ac : AppColors.t3,
+            (index) => GestureDetector(
+              onTap: () => setState(() => _rating = index + 1),
+              child: Text(
+                '★',
+                style: TextStyle(
+                  fontSize: 22,
+                  color: index < _rating ? AppColors.ac : AppColors.t3,
+                ),
               ),
             ),
           ),

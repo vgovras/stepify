@@ -54,7 +54,6 @@ class PrimaryButton extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'DM Sans',
             fontSize: AppSizes.fontButton,
             fontWeight: FontWeight.w700,
             color: isDisabled ? AppColors.t3 : AppColors.bg,

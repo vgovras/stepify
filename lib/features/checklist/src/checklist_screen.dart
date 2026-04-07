@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../app/text_styles.dart';
 import '../../../core/core.dart';
 import '../../../shared_ui/shared_ui.dart';
 import 'checklist_cubit.dart';
@@ -80,14 +82,9 @@ class _Header extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          const Text(
+          Text(
             'Перед готуванням',
-            style: TextStyle(
-              fontFamily: 'Playfair Display',
-              fontSize: AppSizes.fontStepTitle,
-              fontWeight: FontWeight.w700,
-              color: AppColors.tx,
-            ),
+            style: AppTextStyles.stepTitle.copyWith(color: AppColors.tx),
           ),
         ],
       ),

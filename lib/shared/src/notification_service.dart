@@ -30,7 +30,7 @@ class NotificationService {
       requestSoundPermission: true,
     );
     const settings = InitializationSettings(android: android, iOS: ios);
-    await _plugin!.initialize(settings);
+    await _plugin!.initialize(settings: settings);
     _initialized = true;
   }
 
@@ -44,11 +44,11 @@ class NotificationService {
     final scheduledDate = tz.TZDateTime.from(fireAt, tz.local);
 
     await _plugin!.zonedSchedule(
-      stepId,
-      'Stepify',
-      '⏱ $label — час вийшов!',
-      scheduledDate,
-      const NotificationDetails(
+      id: stepId,
+      title: 'Stepify',
+      body: '⏱ $label — час вийшов!',
+      scheduledDate: scheduledDate,
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'timer_channel',
           'Таймери',
@@ -59,14 +59,12 @@ class NotificationService {
         iOS: DarwinNotificationDetails(presentAlert: true, presentSound: true),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
   /// Cancels the notification for [stepId].
   Future<void> cancelNotification(int stepId) async {
-    await _plugin?.cancel(stepId);
+    await _plugin?.cancel(id: stepId);
   }
 
   /// Cancels all scheduled notifications.

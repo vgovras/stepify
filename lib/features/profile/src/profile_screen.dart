@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../app/text_styles.dart';
 import '../../../core/core.dart';
 import '../../../shared_ui/shared_ui.dart';
 import 'profile_cubit.dart';
@@ -45,10 +47,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(
                     state.userName,
-                    style: const TextStyle(
-                      fontFamily: 'Playfair Display',
-                      fontSize: 21,
-                      fontWeight: FontWeight.w700,
+                    style: AppTextStyles.heading21.copyWith(
                       color: AppColors.tx,
                     ),
                   ),

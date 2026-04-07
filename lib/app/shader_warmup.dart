@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/core.dart';
+import 'text_styles.dart';
 
 /// Warms up CanvasKit shaders and shows a branded splash screen
 /// while the app initializes, then fades into the real content.
@@ -81,22 +82,17 @@ class _SplashScreen extends StatelessWidget {
     return Container(
       color: AppColors.bg,
       alignment: Alignment.center,
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('🍲', style: TextStyle(fontSize: 64)),
-          SizedBox(height: 16),
+          const Text('🍲', style: TextStyle(fontSize: 64)),
+          const SizedBox(height: 16),
           Text(
             'Stepify',
-            style: TextStyle(
-              fontFamily: 'Playfair Display',
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              color: AppColors.ac,
-            ),
+            style: AppTextStyles.heading32.copyWith(color: AppColors.ac),
           ),
-          SizedBox(height: 24),
-          SizedBox(
+          const SizedBox(height: 24),
+          const SizedBox(
             width: 24,
             height: 24,
             child: CircularProgressIndicator(
@@ -220,11 +216,8 @@ class _WarmupPrimitives extends StatelessWidget {
           ),
         ),
         // Text rendering warm-up — both font families
-        const Text(
-          'W',
-          style: TextStyle(fontFamily: 'Playfair Display', fontSize: 16),
-        ),
-        const Text('W', style: TextStyle(fontFamily: 'DM Sans', fontSize: 16)),
+        Text('W', style: AppTextStyles.floatBarTimer),
+        const Text('W', style: TextStyle(fontSize: 16)),
       ],
     );
   }

@@ -12,10 +12,10 @@ dependencies:
 
   # State management
   flutter_bloc: ^9.1.0
-  get_it: ^8.0.3
+  get_it: ^9.2.1
 
   # Navigation
-  go_router: ^15.1.2
+  go_router: ^17.2.0
 
   # Local storage
   hive_flutter: ^1.1.0
@@ -23,8 +23,11 @@ dependencies:
   shared_preferences: ^2.5.3
 
   # Notifications
-  flutter_local_notifications: ^18.0.1
-  timezone: ^0.10.0
+  flutter_local_notifications: ^21.0.0
+  timezone: ^0.11.0
+
+  # Fonts
+  google_fonts: ^6.2.1
 
   # Icons
   cupertino_icons: ^1.0.8
@@ -40,11 +43,3 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  fonts:
-    - family: Playfair Display
-      fonts:
-        - asset: assets/fonts/PlayfairDisplay-Bold.ttf
-          weight: 700
-    - family: DM Sans
-      fonts:
-        - asset: assets/fonts/DMSans-Regular.ttf

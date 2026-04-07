@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../core/core.dart';
+import 'text_styles.dart';
 
 final appTheme = ThemeData(
   brightness: Brightness.dark,
   scaffoldBackgroundColor: AppColors.bg,
-  fontFamily: 'DM Sans',
   colorScheme: const ColorScheme.dark(
     surface: AppColors.bg,
     primary: AppColors.ac,
     secondary: AppColors.ac2,
     error: AppColors.rd,
   ),
-  textTheme: ThemeData.dark().textTheme.apply(
-    fontFamily: 'DM Sans',
+  textTheme: AppTextStyles.dmSansTextTheme.apply(
     bodyColor: AppColors.tx,
     displayColor: AppColors.tx,
   ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../app/text_styles.dart';
 import '../../../core/core.dart';
 import '../../../data/data.dart';
 import '../../../shared_ui/shared_ui.dart';
@@ -62,14 +64,9 @@ class _Header extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
+              Text(
                 'Список покупок',
-                style: TextStyle(
-                  fontFamily: 'Playfair Display',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.tx,
-                ),
+                style: AppTextStyles.heading24.copyWith(color: AppColors.tx),
               ),
               const SizedBox(width: 10),
               if (totalCount > 0)

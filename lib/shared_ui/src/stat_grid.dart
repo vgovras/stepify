@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../app/text_styles.dart';
 import '../../core/core.dart';
 
 /// Grid of stats (time | kcal | difficulty) for the detail screen.
@@ -54,12 +56,7 @@ class _CellWidget extends StatelessWidget {
         children: [
           Text(
             cell.value,
-            style: const TextStyle(
-              fontFamily: 'Playfair Display',
-              fontSize: 19,
-              fontWeight: FontWeight.w700,
-              color: AppColors.ac,
-            ),
+            style: AppTextStyles.sectionTitle.copyWith(color: AppColors.ac),
           ),
           const SizedBox(height: 3),
           Text(

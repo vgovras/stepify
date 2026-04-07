@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/core.dart';
 import '../../../data/data.dart';
+import '../../../shared_ui/shared_ui.dart';
 import 'shopping_cubit.dart';
 import 'shopping_state.dart';
 
@@ -202,21 +203,7 @@ class _ShoppingItemRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 6),
         child: Row(
           children: [
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: isBought ? AppColors.gr : Colors.transparent,
-                border: Border.all(
-                  color: isBought ? AppColors.gr : AppColors.br,
-                  width: 1.5,
-                ),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: isBought
-                  ? const Icon(Icons.check, size: 14, color: AppColors.bg)
-                  : null,
-            ),
+            AppCheckbox(isChecked: isBought),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

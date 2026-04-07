@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/core.dart';
 import '../../../../shared_ui/shared_ui.dart';
 import '../cook_state.dart';
 
@@ -27,14 +28,11 @@ class FloatBarSection extends StatelessWidget {
   }
 
   String _findLabel(int stepId) {
-    try {
-      return state.recipe.steps
-              .firstWhere((s) => s.id == stepId)
-              .timer
-              ?.label ??
-          '';
-    } on StateError {
-      return '';
-    }
+    return state.recipe.steps
+            .cast<RecipeStep?>()
+            .firstWhere((s) => s?.id == stepId, orElse: () => null)
+            ?.timer
+            ?.label ??
+        '';
   }
 }

@@ -22,16 +22,21 @@ class ShoppingCubit extends Cubit<ShoppingState> {
 
   /// Adds a list of [ShoppingItem]s to the shopping list.
   Future<void> addItems(List<ShoppingItem> items) async {
-    for (final item in items) {
-      await _repository.add(item);
-    }
+    await _repository.addAll(items);
     loadItems();
   }
 
   /// Toggles the [isBought] flag of the item at [index].
   Future<void> toggleBought(int index) async {
     await _repository.toggleBought(index);
-    loadItems();
+    // Update in-place instead of reloading all items
+    final updated = List<ShoppingItem>.from(state.items);
+    if (index >= 0 && index < updated.length) {
+      updated[index] = updated[index].copyWith(
+        isBought: !updated[index].isBought,
+      );
+      emit(state.copyWith(items: updated));
+    }
   }
 
   /// Removes all items from the shopping list.

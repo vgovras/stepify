@@ -65,15 +65,12 @@ class WaitingView extends StatelessWidget {
   }
 
   String _findLabel(int stepId) {
-    try {
-      return state.recipe.steps
-              .firstWhere((s) => s.id == stepId)
-              .timer
-              ?.label ??
-          '';
-    } on StateError {
-      return '';
-    }
+    return state.recipe.steps
+            .cast<RecipeStep?>()
+            .firstWhere((s) => s?.id == stepId, orElse: () => null)
+            ?.timer
+            ?.label ??
+        '';
   }
 }
 

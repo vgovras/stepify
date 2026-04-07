@@ -8,23 +8,23 @@ import '../../../shared_ui/shared_ui.dart';
 import 'detail_cubit.dart';
 import 'detail_state.dart';
 
+String _difficultyEmoji(Difficulty d) => switch (d) {
+  Difficulty.easy => '🟢',
+  Difficulty.medium => '🟡',
+  Difficulty.hard => '🔴',
+};
+
+String _formatAmount(double? amount) {
+  if (amount == null) return 'за смаком';
+  if (amount.truncateToDouble() == amount) {
+    return amount.toInt().toString();
+  }
+  return amount.toStringAsFixed(1);
+}
+
 /// Recipe detail screen with serving scaler and ingredient list.
 class DetailScreen extends StatelessWidget {
   const DetailScreen({super.key});
-
-  String _difficultyEmoji(Difficulty d) => switch (d) {
-    Difficulty.easy => '🟢',
-    Difficulty.medium => '🟡',
-    Difficulty.hard => '🔴',
-  };
-
-  String _formatAmount(double? amount) {
-    if (amount == null) return 'за смаком';
-    if (amount == amount.roundToDouble()) {
-      return amount.toInt().toString();
-    }
-    return amount.toStringAsFixed(1);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +32,11 @@ class DetailScreen extends StatelessWidget {
       builder: (context, state) {
         final recipe = state.recipe;
         final cubit = context.read<DetailCubit>();
-        final ingredients = state.scaledIngredients;
 
         return Scaffold(
           backgroundColor: AppColors.bg,
           body: CustomScrollView(
             slivers: [
-              // Hero area
               SliverToBoxAdapter(
                 child: _HeroArea(
                   emoji: recipe.emoji,
@@ -46,7 +44,6 @@ class DetailScreen extends StatelessWidget {
                   onBack: () => context.pop(),
                 ),
               ),
-              // Body
               SliverPadding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSizes.screenHorizontal,
@@ -54,75 +51,23 @@ class DetailScreen extends StatelessWidget {
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     const SizedBox(height: 20),
-                    // Recipe name
-                    Text(
-                      recipe.name,
-                      style: GoogleFonts.playfairDisplay(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.tx,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Author line
-                    Text(
-                      '👨‍🍳 Традиційний рецепт'
-                      ' · ⭐ ${recipe.rating}'
-                      ' (${recipe.reviewCount} відгуки)',
-                      style: const TextStyle(fontSize: 13, color: AppColors.t2),
-                    ),
+                    _RecipeHeader(recipe: recipe),
                     const SizedBox(height: 20),
-                    // Serving control
                     ServingControl(
                       servings: state.currentServings,
                       onChanged: cubit.changeServings,
                     ),
                     const SizedBox(height: 16),
-                    // Stat grid
-                    StatGrid(
-                      cells: [
-                        StatCell(
-                          value: '${recipe.timeMinutes} хв',
-                          label: 'хвилин',
-                        ),
-                        StatCell(
-                          value: '${recipe.kcalPerServing}',
-                          label: 'ккал/порц',
-                        ),
-                        StatCell(
-                          value: _difficultyEmoji(recipe.difficulty),
-                          label: 'складність',
-                        ),
-                      ],
-                    ),
+                    _RecipeStats(recipe: recipe),
                     const SizedBox(height: 24),
-                    // Ingredients section
-                    Text(
-                      'Інгредієнти',
-                      style: GoogleFonts.playfairDisplay(
-                        fontSize: AppSizes.fontSectionTitle,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.tx,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // Ingredient list
-                    ...ingredients.map(
-                      (ing) => _IngredientRow(
-                        name: ing.name,
-                        amount: _formatAmount(ing.amount),
-                        unit: ing.amount != null ? ing.unit : '',
-                      ),
-                    ),
+                    _IngredientsSection(ingredients: state.scaledIngredients),
                     const SizedBox(height: 24),
-                    // CTA button
                     PrimaryButton(
                       label: '🛒 Перевірити інгредієнти',
                       onPressed: () =>
                           context.go('/recipe/${recipe.id}/checklist'),
                     ),
                     const SizedBox(height: 24),
-                    // Rating stars (visual only)
                     const _RatingSection(),
                     const SizedBox(height: 32),
                   ]),
@@ -132,6 +77,87 @@ class DetailScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _RecipeHeader extends StatelessWidget {
+  const _RecipeHeader({required this.recipe});
+
+  final Recipe recipe;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          recipe.name,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: AppColors.tx,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '👨‍🍳 Традиційний рецепт'
+          ' · ⭐ ${recipe.rating}'
+          ' (${recipe.reviewCount} відгуки)',
+          style: const TextStyle(fontSize: 13, color: AppColors.t2),
+        ),
+      ],
+    );
+  }
+}
+
+class _RecipeStats extends StatelessWidget {
+  const _RecipeStats({required this.recipe});
+
+  final Recipe recipe;
+
+  @override
+  Widget build(BuildContext context) {
+    return StatGrid(
+      cells: [
+        StatCell(value: '${recipe.timeMinutes} хв', label: 'хвилин'),
+        StatCell(value: '${recipe.kcalPerServing}', label: 'ккал/порц'),
+        StatCell(
+          value: _difficultyEmoji(recipe.difficulty),
+          label: 'складність',
+        ),
+      ],
+    );
+  }
+}
+
+class _IngredientsSection extends StatelessWidget {
+  const _IngredientsSection({required this.ingredients});
+
+  final List<Ingredient> ingredients;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Інгредієнти',
+          style: GoogleFonts.playfairDisplay(
+            fontSize: AppSizes.fontSectionTitle,
+            fontWeight: FontWeight.w700,
+            color: AppColors.tx,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...ingredients.map(
+          (ing) => _IngredientRow(
+            name: ing.name,
+            amount: _formatAmount(ing.amount),
+            unit: ing.amount != null ? ing.unit : '',
+          ),
+        ),
+      ],
     );
   }
 }

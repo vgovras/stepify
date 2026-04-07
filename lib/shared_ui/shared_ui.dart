@@ -3,6 +3,7 @@
 /// Depends only on core.
 library;
 
+export 'src/app_checkbox.dart';
 export 'src/float_bar.dart';
 export 'src/ghost_button.dart';
 export 'src/note_block.dart';

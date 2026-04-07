@@ -7,6 +7,24 @@ import '../../../shared_ui/shared_ui.dart';
 import 'profile_cubit.dart';
 import 'profile_state.dart';
 
+const _monthNames = [
+  'січень',
+  'лютий',
+  'березень',
+  'квітень',
+  'травень',
+  'червень',
+  'липень',
+  'серпень',
+  'вересень',
+  'жовтень',
+  'листопад',
+  'грудень',
+];
+
+String _formatJoinDate(DateTime date) =>
+    '${_monthNames[date.month - 1]} ${date.year}';
+
 /// User profile screen — avatar, stats, and menu items.
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -36,10 +54,10 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Кулінар-ентузіаст \u{00B7}'
-                    ' квітень 2026',
-                    style: TextStyle(
+                    ' ${_formatJoinDate(DateTime.now())}',
+                    style: const TextStyle(
                       fontSize: AppSizes.fontBody,
                       color: AppColors.t3,
                     ),

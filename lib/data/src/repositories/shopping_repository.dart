@@ -90,6 +90,9 @@ abstract class ShoppingRepository {
   /// Adds a single item to the list.
   Future<void> add(ShoppingItem item);
 
+  /// Adds multiple items to the list in a single batch.
+  Future<void> addAll(List<ShoppingItem> items);
+
   /// Toggles the [isBought] flag at [index].
   Future<void> toggleBought(int index);
 
@@ -125,6 +128,13 @@ class HiveShoppingRepository implements ShoppingRepository {
   @override
   Future<void> add(ShoppingItem item) async {
     await _box.add(jsonEncode(item.toJson()));
+  }
+
+  @override
+  Future<void> addAll(List<ShoppingItem> items) async {
+    for (final item in items) {
+      await _box.add(jsonEncode(item.toJson()));
+    }
   }
 
   @override

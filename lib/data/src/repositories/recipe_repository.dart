@@ -16,10 +16,9 @@ class LocalRecipeRepository implements RecipeRepository {
 
   @override
   Recipe? getById(String id) {
-    try {
-      return allRecipes.firstWhere((r) => r.id == id);
-    } on StateError {
-      return null;
-    }
+    return allRecipes.cast<Recipe?>().firstWhere(
+      (r) => r?.id == id,
+      orElse: () => null,
+    );
   }
 }

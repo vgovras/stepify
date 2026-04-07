@@ -281,9 +281,7 @@ class CookCubit extends Cubit<CookState> {
     );
     if (step == null) return ButtonState.waiting;
 
-    final remaining = state.recipe.steps.where(
-      (s) => !states[s.id]!.isDone,
-    );
+    final remaining = state.recipe.steps.where((s) => !states[s.id]!.isDone);
     final isLast = remaining.length <= 1;
 
     if (step.timer == null) {

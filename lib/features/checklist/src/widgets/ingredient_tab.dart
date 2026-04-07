@@ -54,19 +54,17 @@ class IngredientTab extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSizes.screenHorizontal,
                 ),
-                itemCount: state.recipe.ingredients.length,
+                itemCount: state.scaledIngredients.length,
                 itemBuilder: (context, index) {
-                  final ingredient = state.recipe.ingredients[index];
+                  final ingredient = state.scaledIngredients[index];
                   final isChecked = state.ingredientChecks[index];
-                  final scaled = scaleAmount(
-                    baseAmount: ingredient.amount,
-                    baseServings: state.recipe.baseServings,
-                    currentServings: state.currentServings,
-                  );
 
                   return _ChecklistItem(
                     name: ingredient.name,
-                    quantity: _formatQuantity(scaled, ingredient.unit),
+                    quantity: _formatQuantity(
+                      ingredient.amount,
+                      ingredient.unit,
+                    ),
                     isChecked: isChecked,
                     onToggle: () => cubit.toggleIngredient(index),
                   );
@@ -94,7 +92,7 @@ class IngredientTab extends StatelessWidget {
 
   String _formatQuantity(double? amount, String unit) {
     if (amount == null) return 'за смаком';
-    final display = amount == amount.roundToDouble()
+    final display = amount.truncateToDouble() == amount
         ? amount.toInt().toString()
         : amount.toStringAsFixed(1);
     return '$display $unit';
@@ -123,7 +121,7 @@ class _ChecklistItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
-            _Checkbox(isChecked: isChecked),
+            AppCheckbox(isChecked: isChecked),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -146,31 +144,6 @@ class _ChecklistItem extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _Checkbox extends StatelessWidget {
-  const _Checkbox({required this.isChecked});
-
-  final bool isChecked;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 22,
-      height: 22,
-      decoration: BoxDecoration(
-        color: isChecked ? AppColors.gr : Colors.transparent,
-        border: Border.all(
-          color: isChecked ? AppColors.gr : AppColors.br,
-          width: 1.5,
-        ),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: isChecked
-          ? const Icon(Icons.check, size: 14, color: AppColors.bg)
-          : null,
     );
   }
 }

@@ -36,7 +36,7 @@ class BottomActionBtn extends StatelessWidget {
     ButtonState.next || ButtonState.bgTimerNext => ('Далі →', null, false),
     ButtonState.blockingStart => ('Далі →', null, false),
     ButtonState.blockingRunning => (
-      '⏸ Пауза',
+      'Пауза',
       BoxDecoration(
         color: const Color(0x1F_D46060),
         border: Border.all(color: AppColors.rd, width: 1.5),
@@ -44,9 +44,9 @@ class BottomActionBtn extends StatelessWidget {
       ),
       false,
     ),
-    ButtonState.blockingPaused => ('▶ Продовжити', null, false),
+    ButtonState.blockingPaused => ('Продовжити', null, false),
     ButtonState.blockingDone => ('Далі →', null, false),
-    ButtonState.lastStep => ('🎉 Готово!', null, false),
+    ButtonState.lastStep => ('Готово!', null, false),
     ButtonState.waiting => (
       'Очікування...',
       BoxDecoration(

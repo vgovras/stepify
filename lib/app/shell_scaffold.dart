@@ -25,25 +25,25 @@ class ShellScaffold extends StatelessWidget {
         child: Row(
           children: [
             _NavItem(
-              icon: '🏠',
+              icon: Icons.home_rounded,
               label: 'Головна',
               isActive: navigationShell.currentIndex == 0,
               onTap: () => navigationShell.goBranch(0),
             ),
             _NavItem(
-              icon: '🔍',
+              icon: Icons.search_rounded,
               label: 'Пошук',
               isActive: navigationShell.currentIndex == 1,
               onTap: () => navigationShell.goBranch(1),
             ),
             _NavItem(
-              icon: '🛒',
+              icon: Icons.shopping_cart_rounded,
               label: 'Покупки',
               isActive: navigationShell.currentIndex == 2,
               onTap: () => navigationShell.goBranch(2),
             ),
             _NavItem(
-              icon: '👤',
+              icon: Icons.person_rounded,
               label: 'Профіль',
               isActive: navigationShell.currentIndex == 3,
               onTap: () => navigationShell.goBranch(3),
@@ -63,7 +63,7 @@ class _NavItem extends StatelessWidget {
     required this.onTap,
   });
 
-  final String icon;
+  final IconData icon;
   final String label;
   final bool isActive;
   final VoidCallback onTap;
@@ -77,7 +77,11 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(icon, style: const TextStyle(fontSize: 22)),
+            Icon(
+              icon,
+              size: 22,
+              color: isActive ? AppColors.ac : AppColors.t3,
+            ),
             const SizedBox(height: 4),
             Text(
               label,

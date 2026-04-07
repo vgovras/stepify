@@ -8,10 +8,10 @@ import '../../../shared_ui/shared_ui.dart';
 import 'detail_cubit.dart';
 import 'detail_state.dart';
 
-String _difficultyEmoji(Difficulty d) => switch (d) {
-  Difficulty.easy => '🟢',
-  Difficulty.medium => '🟡',
-  Difficulty.hard => '🔴',
+String _difficultyLabel(Difficulty d) => switch (d) {
+  Difficulty.easy => 'Легко',
+  Difficulty.medium => 'Середньо',
+  Difficulty.hard => 'Складно',
 };
 
 String _formatAmount(double? amount) {
@@ -63,7 +63,7 @@ class DetailScreen extends StatelessWidget {
                     _IngredientsSection(ingredients: state.scaledIngredients),
                     const SizedBox(height: 24),
                     PrimaryButton(
-                      label: '🛒 Перевірити інгредієнти',
+                      label: 'Перевірити інгредієнти',
                       onPressed: () =>
                           context.push('/recipe/${recipe.id}/checklist'),
                     ),
@@ -97,8 +97,8 @@ class _RecipeHeader extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          '👨‍🍳 Традиційний рецепт'
-          ' · ⭐ ${recipe.rating}'
+          'Традиційний рецепт'
+          ' · ★ ${recipe.rating}'
           ' (${recipe.reviewCount} відгуки)',
           style: const TextStyle(fontSize: 13, color: AppColors.t2),
         ),
@@ -119,7 +119,7 @@ class _RecipeStats extends StatelessWidget {
         StatCell(value: '${recipe.timeMinutes} хв', label: 'хвилин'),
         StatCell(value: '${recipe.kcalPerServing}', label: 'ккал/порц'),
         StatCell(
-          value: _difficultyEmoji(recipe.difficulty),
+          value: _difficultyLabel(recipe.difficulty),
           label: 'складність',
         ),
       ],
@@ -188,7 +188,7 @@ class _HeroArea extends StatelessWidget {
               stops: const [0.0, 0.6, 1.0],
             ),
           ),
-          child: Text(emoji, style: const TextStyle(fontSize: 88)),
+          child: EmojiText(emoji, fontSize: 88),
         ),
         Positioned(
           top: MediaQuery.paddingOf(context).top + 8,
@@ -383,7 +383,7 @@ class _RatingSectionState extends State<_RatingSection> {
           author: 'Михайло Р.',
           text:
               'Вперше зварив борщ і вийшло ідеально. '
-              'Таймери — просто вогонь 🔥',
+              'Таймери — просто вогонь!',
         ),
       ],
     );

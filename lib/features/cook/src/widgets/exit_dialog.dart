@@ -19,7 +19,11 @@ class ExitDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('🍳', style: TextStyle(fontSize: 38)),
+            const Icon(
+              Icons.restaurant,
+              size: 38,
+              color: AppColors.ac,
+            ),
             const SizedBox(height: 10),
             const Text(
               'Зупинити?',

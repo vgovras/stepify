@@ -54,7 +54,11 @@ class FloatBar extends StatelessWidget {
             style: AppTextStyles.floatBarTimer.copyWith(color: timeColor),
           ),
           const SizedBox(width: 6),
-          const Text('→', style: TextStyle(fontSize: 11, color: AppColors.t3)),
+          const Icon(
+            Icons.chevron_right,
+            size: 14,
+            color: AppColors.t3,
+          ),
         ],
       ),
     );

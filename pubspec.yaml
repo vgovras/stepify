@@ -26,9 +26,6 @@ dependencies:
   flutter_local_notifications: ^21.0.0
   timezone: ^0.11.0
 
-  # Fonts
-  google_fonts: ^6.2.1
-
   # Icons
   cupertino_icons: ^1.0.8
 
@@ -42,4 +39,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
+    - family: Playfair Display
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay.ttf
+        - asset: assets/fonts/PlayfairDisplay-Italic.ttf
+          style: italic
 

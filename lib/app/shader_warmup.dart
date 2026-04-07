@@ -85,7 +85,11 @@ class _SplashScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('🍲', style: TextStyle(fontSize: 64)),
+          const Icon(
+            Icons.restaurant_menu,
+            size: 64,
+            color: AppColors.ac,
+          ),
           const SizedBox(height: 16),
           Text(
             'Stepify',
@@ -215,9 +219,9 @@ class _WarmupPrimitives extends StatelessWidget {
             shape: BoxShape.circle,
           ),
         ),
-        // Text rendering warm-up — both font families
-        Text('W', style: AppTextStyles.floatBarTimer),
-        const Text('W', style: TextStyle(fontSize: 16)),
+        // Text rendering warm-up — both font families + Cyrillic glyphs
+        const Text('Щ', style: AppTextStyles.floatBarTimer),
+        const Text('Щ', style: TextStyle(fontSize: 16)),
       ],
     );
   }

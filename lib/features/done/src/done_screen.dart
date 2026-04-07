@@ -95,7 +95,11 @@ class _DoneScreenState extends State<DoneScreen> with TickerProviderStateMixin {
                       const Spacer(flex: 2),
                       ScaleTransition(
                         scale: _emojiScale,
-                        child: const Text('🎉', style: TextStyle(fontSize: 68)),
+                        child: const Icon(
+                          Icons.celebration,
+                          size: 68,
+                          color: AppColors.ac,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       Text(
@@ -128,19 +132,19 @@ class _DoneScreenState extends State<DoneScreen> with TickerProviderStateMixin {
                       ),
                       const Spacer(flex: 2),
                       PrimaryButton(
-                        label: '⭐ Оцінити рецепт',
+                        label: 'Оцінити рецепт',
                         onPressed: state.hasRated ? null : _showRatingSheet,
                         isDisabled: state.hasRated,
                       ),
                       const SizedBox(height: 12),
                       GhostButton(
-                        label: '📤 Поділитись',
+                        label: 'Поділитись',
                         onPressed: () =>
                             showAppToast(context, 'Поділитись — в розробці'),
                       ),
                       const SizedBox(height: 12),
                       GhostButton(
-                        label: '🏠 На головну',
+                        label: 'На головну',
                         onPressed: () => context.go('/'),
                       ),
                       const SizedBox(height: 32),

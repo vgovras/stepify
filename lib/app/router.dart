@@ -32,7 +32,7 @@ final appRouter = GoRouter(
               builder: (context, state) => const Scaffold(
                 body: Center(
                   child: Text(
-                    '🔍 Пошук в розробці',
+                    'Пошук в розробці',
                     style: TextStyle(color: AppColors.t3),
                   ),
                 ),

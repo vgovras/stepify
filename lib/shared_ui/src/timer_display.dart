@@ -66,13 +66,24 @@ class TimerDisplay extends StatelessWidget {
                     ),
                     if (isBackground) ...[
                       const SizedBox(height: 3),
-                      const Text(
-                        '⚡ Продовжується у фоні після "Далі"',
-                        style: TextStyle(
-                          fontSize: AppSizes.fontLabel,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.ac2,
-                        ),
+                      const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.bolt,
+                            size: 13,
+                            color: AppColors.ac2,
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            'Продовжується у фоні після "Далі"',
+                            style: TextStyle(
+                              fontSize: AppSizes.fontLabel,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.ac2,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ],

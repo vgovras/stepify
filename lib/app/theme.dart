@@ -12,9 +12,14 @@ final appTheme = ThemeData(
     secondary: AppColors.ac2,
     error: AppColors.rd,
   ),
-  textTheme: AppTextStyles.dmSansTextTheme.apply(
+  textTheme: AppTextStyles.interTextTheme.apply(
     bodyColor: AppColors.tx,
     displayColor: AppColors.tx,
+    fontFamilyFallback: [
+      'Apple Color Emoji',
+      'Noto Color Emoji',
+      'Segoe UI Emoji',
+    ],
   ),
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.bg,

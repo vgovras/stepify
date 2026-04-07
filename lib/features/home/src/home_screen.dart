@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   sliver: SliverToBoxAdapter(
                     child: _SearchBar(
-                      onTap: () => showAppToast(context, '🔍 Пошук в розробці'),
+                      onTap: () => showAppToast(context, 'Пошук в розробці'),
                     ),
                   ),
                 ),

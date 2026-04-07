@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/text_styles.dart';
 import '../../core/core.dart';
+import 'emoji_text.dart';
 
 /// Recipe card for the home catalog.
 class RecipeCard extends StatelessWidget {
@@ -10,10 +11,16 @@ class RecipeCard extends StatelessWidget {
   final Recipe recipe;
   final VoidCallback onTap;
 
-  String get _diffBadge => switch (recipe.difficulty) {
-    Difficulty.easy => '🟢 Легко',
-    Difficulty.medium => '🟡 Середньо',
-    Difficulty.hard => '🔴 Складно',
+  String get _diffLabel => switch (recipe.difficulty) {
+    Difficulty.easy => 'Легко',
+    Difficulty.medium => 'Середньо',
+    Difficulty.hard => 'Складно',
+  };
+
+  Color get _diffColor => switch (recipe.difficulty) {
+    Difficulty.easy => AppColors.gr,
+    Difficulty.medium => AppColors.ac,
+    Difficulty.hard => AppColors.rd,
   };
 
   @override
@@ -51,10 +58,7 @@ class RecipeCard extends StatelessWidget {
                       colors: [gradStart, gradEnd],
                     ),
                   ),
-                  child: Text(
-                    recipe.emoji,
-                    style: const TextStyle(fontSize: 72),
-                  ),
+                  child: EmojiText(recipe.emoji, fontSize: 72),
                 ),
                 // Gradient fade at bottom
                 Positioned(
@@ -91,12 +95,26 @@ class RecipeCard extends StatelessWidget {
                         color: Colors.white.withValues(alpha: 0.07),
                       ),
                     ),
-                    child: Text(
-                      _diffBadge,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: _diffColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          _diffLabel,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -117,7 +135,11 @@ class RecipeCard extends StatelessWidget {
                         ),
                       ),
                       alignment: Alignment.center,
-                      child: const Text('🤍', style: TextStyle(fontSize: 14)),
+                      child: const Icon(
+                        Icons.favorite_border,
+                        size: 16,
+                        color: AppColors.tx,
+                      ),
                     ),
                   ),
                 ),
@@ -133,9 +155,15 @@ class RecipeCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      _MetaItem(text: '⏱ ${recipe.timeMinutes} хв'),
+                      _MetaItem(
+                        icon: Icons.timer_outlined,
+                        text: '${recipe.timeMinutes} хв',
+                      ),
                       const SizedBox(width: 12),
-                      _MetaItem(text: '🔥 ${recipe.kcalPerServing} ккал'),
+                      _MetaItem(
+                        icon: Icons.local_fire_department,
+                        text: '${recipe.kcalPerServing} ккал',
+                      ),
                       const SizedBox(width: 12),
                       Text(
                         '★★★★★ ${recipe.rating}',
@@ -167,14 +195,22 @@ class RecipeCard extends StatelessWidget {
 }
 
 class _MetaItem extends StatelessWidget {
-  const _MetaItem({required this.text});
+  const _MetaItem({required this.icon, required this.text});
+  final IconData icon;
   final String text;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 12, color: AppColors.t2),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 13, color: AppColors.t2),
+        const SizedBox(width: 3),
+        Text(
+          text,
+          style: const TextStyle(fontSize: 12, color: AppColors.t2),
+        ),
+      ],
     );
   }
 }

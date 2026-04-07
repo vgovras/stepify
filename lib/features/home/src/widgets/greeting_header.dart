@@ -5,7 +5,7 @@ import '../../../../core/core.dart';
 
 /// Greeting block with personalized hello and heading.
 ///
-/// Displays "Привіт, Славе 👋" in muted text and a two-line
+/// Displays "Привіт, Славе" in muted text and a two-line
 /// heading where "готувати?" is highlighted in gold.
 class GreetingHeader extends StatelessWidget {
   const GreetingHeader({super.key});
@@ -16,7 +16,7 @@ class GreetingHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Привіт, Славе 👋',
+          'Привіт, Славе',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,

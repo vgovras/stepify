@@ -36,7 +36,7 @@ class Recipe {
   final double rating;
   final int reviewCount;
 
-  /// Display tags for the recipe card (e.g. "🇺🇦 Українська").
+  /// Display tags for the recipe card (e.g. "Українська").
   final List<String> tags;
 
   /// Gradient background for the card image area [start, end].

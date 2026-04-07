@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/core.dart';
+import '../shared_ui/shared_ui.dart';
 import 'text_styles.dart';
 
 /// Warms up CanvasKit shaders and shows a branded splash screen
@@ -85,10 +86,9 @@ class _SplashScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.restaurant_menu,
+          const SvgIcon(
+            AppIcons.potOfFood,
             size: 64,
-            color: AppColors.ac,
           ),
           const SizedBox(height: 16),
           Text(

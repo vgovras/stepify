@@ -10,7 +10,7 @@ final List<Recipe> allRecipes = [borschRecipe, omeletteRecipe];
 const borschRecipe = Recipe(
   id: 'borscht',
   name: 'Борщ Червоний',
-  emoji: '🍲',
+  iconAsset: 'pot_of_food',
   baseServings: 4,
   timeMinutes: 90,
   kcalPerServing: 320,
@@ -490,7 +490,7 @@ const List<RecipeStep> _borschSteps = [
 const omeletteRecipe = Recipe(
   id: 'omelette',
   name: 'Омлет з начинкою',
-  emoji: '🍳',
+  iconAsset: 'cooking',
   baseServings: 2,
   timeMinutes: 25,
   kcalPerServing: 420,

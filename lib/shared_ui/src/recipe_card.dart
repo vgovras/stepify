@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../app/text_styles.dart';
 import '../../core/core.dart';
-import 'emoji_text.dart';
+import 'svg_icon.dart';
 
 /// Recipe card for the home catalog.
 class RecipeCard extends StatelessWidget {
@@ -58,7 +59,10 @@ class RecipeCard extends StatelessWidget {
                       colors: [gradStart, gradEnd],
                     ),
                   ),
-                  child: EmojiText(recipe.emoji, fontSize: 72),
+                  child: SvgIcon(
+                    AppIcons.forRecipe(recipe.iconAsset),
+                    size: 72,
+                  ),
                 ),
                 // Gradient fade at bottom
                 Positioned(
@@ -156,12 +160,12 @@ class RecipeCard extends StatelessWidget {
                   Row(
                     children: [
                       _MetaItem(
-                        icon: Icons.timer_outlined,
+                        svgAsset: AppIcons.stopwatch,
                         text: '${recipe.timeMinutes} хв',
                       ),
                       const SizedBox(width: 12),
                       _MetaItem(
-                        icon: Icons.local_fire_department,
+                        svgAsset: AppIcons.fire,
                         text: '${recipe.kcalPerServing} ккал',
                       ),
                       const SizedBox(width: 12),
@@ -195,8 +199,8 @@ class RecipeCard extends StatelessWidget {
 }
 
 class _MetaItem extends StatelessWidget {
-  const _MetaItem({required this.icon, required this.text});
-  final IconData icon;
+  const _MetaItem({required this.svgAsset, required this.text});
+  final String svgAsset;
   final String text;
 
   @override
@@ -204,7 +208,7 @@ class _MetaItem extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: AppColors.t2),
+        SvgPicture.asset(svgAsset, width: 13, height: 13),
         const SizedBox(width: 3),
         Text(
           text,

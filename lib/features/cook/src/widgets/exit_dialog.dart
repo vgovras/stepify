@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/core.dart';
+import '../../../../shared_ui/shared_ui.dart';
 
 /// "Stop cooking?" confirmation dialog.
 class ExitDialog extends StatelessWidget {
@@ -19,10 +20,9 @@ class ExitDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.restaurant,
+            const SvgIcon(
+              AppIcons.cooking,
               size: 38,
-              color: AppColors.ac,
             ),
             const SizedBox(height: 10),
             const Text(

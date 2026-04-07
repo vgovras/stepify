@@ -4,7 +4,6 @@
 library;
 
 export 'src/app_checkbox.dart';
-export 'src/emoji_text.dart';
 export 'src/float_bar.dart';
 export 'src/ghost_button.dart';
 export 'src/note_block.dart';
@@ -13,5 +12,6 @@ export 'src/progress_bar.dart';
 export 'src/recipe_card.dart';
 export 'src/serving_control.dart';
 export 'src/stat_grid.dart';
+export 'src/svg_icon.dart';
 export 'src/timer_display.dart';
 export 'src/toast_notification.dart';

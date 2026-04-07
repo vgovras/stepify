@@ -39,7 +39,7 @@ class DetailScreen extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: _HeroArea(
-                  emoji: recipe.emoji,
+                  iconAsset: recipe.iconAsset,
                   gradientColors: recipe.gradientColors,
                   onBack: () => context.pop(),
                 ),
@@ -156,12 +156,12 @@ class _IngredientsSection extends StatelessWidget {
 
 class _HeroArea extends StatelessWidget {
   const _HeroArea({
-    required this.emoji,
+    required this.iconAsset,
     required this.onBack,
     this.gradientColors,
   });
 
-  final String emoji;
+  final String iconAsset;
   final VoidCallback onBack;
   final (int, int)? gradientColors;
 
@@ -188,7 +188,7 @@ class _HeroArea extends StatelessWidget {
               stops: const [0.0, 0.6, 1.0],
             ),
           ),
-          child: EmojiText(emoji, fontSize: 88),
+          child: SvgIcon(AppIcons.forRecipe(iconAsset), size: 88),
         ),
         Positioned(
           top: MediaQuery.paddingOf(context).top + 8,

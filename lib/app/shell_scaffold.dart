@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/core.dart';
+import '../shared_ui/shared_ui.dart';
 
 /// Bottom navigation scaffold used by [ShellRoute].
 ///
@@ -25,25 +27,25 @@ class ShellScaffold extends StatelessWidget {
         child: Row(
           children: [
             _NavItem(
-              icon: Icons.home_rounded,
+              svgAsset: AppIcons.house,
               label: 'Головна',
               isActive: navigationShell.currentIndex == 0,
               onTap: () => navigationShell.goBranch(0),
             ),
             _NavItem(
-              icon: Icons.search_rounded,
+              svgAsset: AppIcons.magnifyingGlass,
               label: 'Пошук',
               isActive: navigationShell.currentIndex == 1,
               onTap: () => navigationShell.goBranch(1),
             ),
             _NavItem(
-              icon: Icons.shopping_cart_rounded,
+              svgAsset: AppIcons.shoppingCart,
               label: 'Покупки',
               isActive: navigationShell.currentIndex == 2,
               onTap: () => navigationShell.goBranch(2),
             ),
             _NavItem(
-              icon: Icons.person_rounded,
+              svgAsset: AppIcons.bustInSilhouette,
               label: 'Профіль',
               isActive: navigationShell.currentIndex == 3,
               onTap: () => navigationShell.goBranch(3),
@@ -57,13 +59,13 @@ class ShellScaffold extends StatelessWidget {
 
 class _NavItem extends StatelessWidget {
   const _NavItem({
-    required this.icon,
+    required this.svgAsset,
     required this.label,
     required this.isActive,
     required this.onTap,
   });
 
-  final IconData icon;
+  final String svgAsset;
   final String label;
   final bool isActive;
   final VoidCallback onTap;
@@ -77,11 +79,7 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: isActive ? AppColors.ac : AppColors.t3,
-            ),
+            SvgPicture.asset(svgAsset, width: 24, height: 24),
             const SizedBox(height: 4),
             Text(
               label,

@@ -95,10 +95,9 @@ class _DoneScreenState extends State<DoneScreen> with TickerProviderStateMixin {
                       const Spacer(flex: 2),
                       ScaleTransition(
                         scale: _emojiScale,
-                        child: const Icon(
-                          Icons.celebration,
+                        child: const SvgIcon(
+                          AppIcons.partyPopper,
                           size: 68,
-                          color: AppColors.ac,
                         ),
                       ),
                       const SizedBox(height: 20),

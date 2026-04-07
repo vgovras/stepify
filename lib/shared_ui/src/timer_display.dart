@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../app/text_styles.dart';
 import '../../core/core.dart';
+import 'svg_icon.dart';
 
 /// Inline timer block displayed within a step card.
 class TimerDisplay extends StatelessWidget {
@@ -66,21 +68,23 @@ class TimerDisplay extends StatelessWidget {
                     ),
                     if (isBackground) ...[
                       const SizedBox(height: 3),
-                      const Row(
-                        mainAxisSize: MainAxisSize.min,
+                      Row(
                         children: [
-                          Icon(
-                            Icons.bolt,
-                            size: 13,
-                            color: AppColors.ac2,
+                          SvgPicture.asset(
+                            AppIcons.highVoltage,
+                            width: 13,
+                            height: 13,
                           ),
-                          SizedBox(width: 2),
-                          Text(
-                            'Продовжується у фоні після "Далі"',
-                            style: TextStyle(
-                              fontSize: AppSizes.fontLabel,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.ac2,
+                          const SizedBox(width: 2),
+                          const Flexible(
+                            child: Text(
+                              'Продовжується у фоні після "Далі"',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: AppSizes.fontLabel,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.ac2,
+                              ),
                             ),
                           ),
                         ],

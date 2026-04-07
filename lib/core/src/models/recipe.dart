@@ -9,7 +9,7 @@ class Recipe {
   const Recipe({
     required this.id,
     required this.name,
-    required this.emoji,
+    required this.iconAsset,
     required this.baseServings,
     required this.timeMinutes,
     required this.kcalPerServing,
@@ -25,7 +25,9 @@ class Recipe {
 
   final String id;
   final String name;
-  final String emoji;
+
+  /// SVG icon asset name without path or extension (e.g. 'pot_of_food').
+  final String iconAsset;
   final int baseServings;
   final int timeMinutes;
   final int kcalPerServing;
